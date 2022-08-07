@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./components/Login/Login";
+import EsqueceuSenha from "./components/Login/EsqueceuSenha";
 import NovoCliente from "./components/NovoCliente/NovoCliente";
 import Admin from "./components/Admin/Admin";
 import MyContext from "./context";
@@ -17,6 +18,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/novo-cliente" element={<NovoCliente />} />
+          <Route path="/esqueceu-senha" element={<EsqueceuSenha />} />
           <Route path="/admin/*" element={<Admin />} />
         </Routes>
       </BrowserRouter>

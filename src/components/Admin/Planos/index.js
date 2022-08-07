@@ -4,43 +4,38 @@ import { fn } from "./../../../util/funcao";
 import { useNavigate } from "react-router-dom";
 import API from "./../../../http/api";
 
-export default function Planos() {
+import useDocumentTitle from "./../Title/useDocumentTitle";
+
+export default function Planos({ title }) {
+  useDocumentTitle(title);
   let navigate = useNavigate();
-    const [ planos, setPlanos ] = useState([]);
-    
-    const listarPlanos = () => {
-        try {
-        API.get(`api/admin/plano`).then(async (res) => {
-          setPlanos(res.data.entity);
-        });
-        } catch (e) {}
-    }
+  const [planos, setPlanos] = useState([]);
 
-    const escolherPlano = (plano) => {
-        navigate("/admin/checkout", { state: { plano } });
-    }
+  const listarPlanos = () => {
+    try {
+      API.get(`api/admin/plano`).then(async (res) => {
+        setPlanos(res.data.entity);
+      });
+    } catch (e) {}
+  };
 
-    useEffect(() => {
-        listarPlanos()
-    }, [])
+  const escolherPlano = (plano) => {
+    navigate("/admin/checkout", { state: { plano } });
+  };
+
+  useEffect(() => {
+    listarPlanos();
+  }, []);
 
   return (
     <>
       <div className="side-app">
         <div className="main-container container-fluid">
-          <div className="page-header">
-            <div>
-              <h1 className="page-title">Bem vindo!</h1>
-              <h4 className="card-title mt-4">
-                Selecione o plano desejado para obter acesso ao sistema.
-              </h4>
-            </div>
-          </div>
-          <div className="row">
+          <div className="row justify-content-center">
             {planos.length > 0 &&
               planos.map((plano) => (
                 <div className="col-sm-6 col-xl-3 primary" key={plano.id}>
-                  <div className="princing-item mb-4">
+                  <div className="princing-item mb-4 mt-6">
                     <div className="pricing-divider text-center br-5">
                       <h3 className="text-light">{plano.plano}</h3>
                       <h4 className="my-0 display-2 text-light fw-normal mb-3">
@@ -93,23 +88,30 @@ export default function Planos() {
                     <div className=" br-5 bg-white mt-0 shadow text-center">
                       <ul className="list-group list-group-flush text-center">
                         <li className="list-group-item">
-                          <b>{plano.recorrencia_mes} mes(es)</b> de acesso
+                          <b>{plano.recorrencia_mes} dias</b> de acesso
                         </li>
                         <li className="list-group-item">
-                          <b>3</b> Mosaicos
+                          <b>Resultados das corridas</b>
                         </li>
                         <li className="list-group-item">
-                          <b>Próximas Corridas</b>
+                          <b>Máximas</b> de pilotos e Odds
                         </li>
                         <li className="list-group-item">
-                          <b> Máximas</b> de pilotos
+                          <b>4</b> Mosaicos
                         </li>
                         <li className="list-group-item">
-                          <b> Suporte</b> exclusivo
+                          <b>Histórico</b> dos Pilotos
+                        </li>
+                        <li className="list-group-item">
+                          <b>Entre outras</b> funcionalidades
                         </li>
                       </ul>
                       <div className="card-footer">
-                        <button type="button" onClick={() => escolherPlano(plano)} className="btn btn-primary ">
+                        <button
+                          type="button"
+                          onClick={() => escolherPlano(plano)}
+                          className="btn btn-primary "
+                        >
                           Escolher Plano
                         </button>
                       </div>

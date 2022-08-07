@@ -25,7 +25,72 @@
     <link href="%PUBLIC_URL%/assets/css/icons.css" rel="stylesheet" />
     
     <link id="theme" rel="stylesheet" type="text/css" media="all" href="%PUBLIC_URL%/assets/colors/color1.css" />
+    <style>
+      .horizontalMenucontainer .responsive-navbar.navbar .navbar-collapse{
+          justify-content: end;
+      }
 
+      .btn-success{
+        color: #fff !important;
+      }
+
+      .table-odd tr {
+        text-align: center;
+      }
+
+      .tag-green {
+        background-color: #328c2e!important;
+        color: #fff;
+      }
+
+      .tag-yellow{
+        background-color: #dba704!important;
+        color: #fff;
+      }
+
+      .table-poxcorrida p{
+        font-size: 11px;
+      }
+      .loading-gif{
+        width: 300px;
+        max-width: 100%;
+      }
+      .horizontal .horizontal-main .container{
+        max-width: 100% !important;
+      }
+      .side-menu .side-menu__icon{
+        top: 2px!important;
+      }
+
+      @media screen and (max-width: 1045px) and (min-width: 992px){
+        .horizontal .side-menu>li>a {
+            padding: 16px 7px!important;
+        }
+      }
+
+
+      @media (min-width: 992px){
+        .horizontal .side-menu{
+          justify-content: center;
+        }
+        .horizontal .hor-header .container {
+          max-width: 1140px!important;    
+          padding-right: 0.75rem;    
+          padding-left: 0.75rem;
+        }
+      }
+
+      @media (max-width: 991px){
+        .mobile-logo{
+          width: 110px;
+        }
+        .side-app {
+          padding: 65px 15px 0 15px!important;
+        }
+      }
+
+
+    </style>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -35,7 +100,7 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>Sistema AUTOBET</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

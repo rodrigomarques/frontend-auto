@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import API from "./../../../http/api";
 import parse from 'html-react-parser';
 import { formatMosaico } from "./../../../util/funcao";
-
-export default function Mosaicos({show}) {
+import useDocumentTitle from "./../Title/useDocumentTitle";
+export default function Mosaicos({ title:tituloHeader, show }) {
+  useDocumentTitle(tituloHeader);
   const [dadosCorridas, setDadosCorridas] = useState([]);
+  const [title, setTitle] = useState("MOSAICO DE ODD");
+
   const [header, setHeader] = useState([]);
   const [showNumberOdd, setShowNumberOdd] = useState("all");
-
 
   const ultimasCorridas = () => {
     try {
@@ -15,30 +17,42 @@ export default function Mosaicos({show}) {
         setDadosCorridas(res.data.mosaico);
       });
     } catch (e) {}
+  };
+
+  const atualizarHeader = () => {
+    let values = [];
+    var dt1 = new Date().toLocaleString("en-GB", {
+      hour: "2-digit",
+      timeZone: "Europe/London",
+    });
+    for (let i = 0; i < 24; i++) {
+      let hora = dt1 - i; //data.getHours() - i;
+      if (hora < 0) {
+        hora = hora + 24;
+      }
+      if (hora < 10) hora = "0" + hora;
+      values.push(hora);
+    }
+    values.reverse();
+    setHeader(values);
   }
 
   useEffect(() => {
-    setShowNumberOdd(show)
+    if (show === 2) setTitle("MOSAICO PREVISÃO");
+    else if (show === "all") setTitle("MOSAICO TRICAST");
+    else if (show === 1) setTitle("MOSAICO BACK");
+    setShowNumberOdd(show);
 
-    let values = [];
-    var data = new Date();
-    for (let i = 0; i < 24; i++) {
-      let hora = data.getHours() - i;
-      if (hora < 0) {
-        hora = hora + 24 ;
-      }
-      values.push(hora);
-    }
-    setHeader(values)
-    ultimasCorridas();
+    atualizarHeader()
+    ultimasCorridas()
 
     const ajaxTime = setInterval(() => {
+      atualizarHeader();
       ultimasCorridas();
-    }, 45000);
+    }, 15000);
 
     return (_) => clearTimeout(ajaxTime);
-
-  }, [])
+  }, []);
 
   return (
     <>
@@ -49,7 +63,7 @@ export default function Mosaicos({show}) {
               <div className="card overflow-hidden bg-info-transparent">
                 <div className="card-body">
                   <div className="row">
-                    <h1 className="page-title text-center">MOSAICO DE ODD</h1>
+                    <h1 className="page-title text-center">{title}</h1>
                   </div>
                 </div>
               </div>
@@ -68,7 +82,7 @@ export default function Mosaicos({show}) {
                   <div className="table-responsive">
                     <table className="table border text-nowrap text-md-nowrap table-bordered mg-b-0 table-odd">
                       <thead>
-                        <tr>
+                        <tr style={{ backgroundColor: "#EDEDED" }}>
                           <th></th>
                           <th>00</th>
                           <th>03</th>
@@ -299,6 +313,31 @@ export default function Mosaicos({show}) {
                           </tr>
                         ))}
                       </tbody>
+                      <tfoot>
+                        <tr style={{ backgroundColor: "#EDEDED" }}>
+                          <th></th>
+                          <th>00</th>
+                          <th>03</th>
+                          <th>06</th>
+                          <th>09</th>
+                          <th>12</th>
+                          <th>15</th>
+                          <th>18</th>
+                          <th>21</th>
+                          <th>24</th>
+                          <th>27</th>
+                          <th>30</th>
+                          <th>33</th>
+                          <th>36</th>
+                          <th>39</th>
+                          <th>42</th>
+                          <th>45</th>
+                          <th>48</th>
+                          <th>51</th>
+                          <th>54</th>
+                          <th>57</th>
+                        </tr>
+                      </tfoot>
                     </table>
                   </div>
                 </div>

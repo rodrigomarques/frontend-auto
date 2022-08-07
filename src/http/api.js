@@ -18,6 +18,9 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
+    if (response.data.token !== undefined) {
+      localStorage.setItem("tk", response.data.token);
+    }
     return response;
   },
   (error) => {

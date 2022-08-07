@@ -1,21 +1,59 @@
 import React, { useEffect, useState } from "react";
 import API from "./../../../http/api";
 import parse from 'html-react-parser';
-import { formatMosaicoOdd } from "./../../../util/funcao";
+import { formatMosaicoOddValores, fn } from "./../../../util/funcao";
 import useDocumentTitle from "./../Title/useDocumentTitle";
 
-export default function MosaicoOdd({ title }) {
+export default function MosaicoOddValor({ title }) {
 
   useDocumentTitle(title);
 
   const [dadosCorridas, setDadosCorridas] = useState([]);
   const [header, setHeader] = useState([]);
-  const [showNumberOdd, setShowNumberOdd] = useState("all");
+  const [showNumberOdd, setShowNumberOdd] = useState(2);
+  const [totalPagoHora, setTotalPagoHora] = useState(0);
 
+  const addTotalPago = (horaAtual) => {
+    let total = 0
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:00`]))
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:03`]))
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:06`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:09`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:12`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:15`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:18`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:21`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:24`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:27`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:30`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:33`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:36`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:39`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:42`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:45`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:48`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:51`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:54`]));
+    total += parseFloat(getValor(dadosCorridas[`${horaAtual}:57`]));
+    return "R$ " + fn(total);
+  }
 
+  const getValor = (corrida) => {
+    if (corrida === undefined) return 0;
+    if (typeof corrida !== "object") return 0;
+    let valor = 0;
+    corrida.map((elem, index) => {
+      let posicaoExibir = index + 1;
+      if (showNumberOdd === posicaoExibir) {
+        valor = elem;
+      }
+      return elem;
+    });
+    return valor;
+  }
   const ultimasCorridas = () => {
     try {
-      API.get(`ultimas-corrida-odds`).then(async (res) => {
+      API.get(`api/ultimas-corrida-valores`).then(async (res) => {
         setDadosCorridas(res.data.mosaico);
       });
     } catch (e) {}
@@ -27,8 +65,7 @@ export default function MosaicoOdd({ title }) {
       hour: "2-digit",
       timeZone: "Europe/London",
     });
-    //var data = new Date(dt1)
-    //console.log(data);
+
     for (let i = 0; i < 24; i++) {
       let hora = dt1 - i //data.getHours() - i;
       
@@ -84,7 +121,7 @@ export default function MosaicoOdd({ title }) {
                         }
                         onClick={() => setShowNumberOdd(1)}
                       >
-                        Odd Back
+                        Valor Previsão
                       </a>
                       <a
                         className={
@@ -94,17 +131,7 @@ export default function MosaicoOdd({ title }) {
                         }
                         onClick={() => setShowNumberOdd(2)}
                       >
-                        Odd Previsão
-                      </a>
-                      <a
-                        className={
-                          showNumberOdd == "all"
-                            ? "btn btn-primary"
-                            : "btn btn-primary-light"
-                        }
-                        onClick={() => setShowNumberOdd("all")}
-                      >
-                        Odd Tricast
+                        Valor Tricast
                       </a>
                     </div>
                   </div>
@@ -138,16 +165,17 @@ export default function MosaicoOdd({ title }) {
                           <th>51</th>
                           <th>54</th>
                           <th>57</th>
+                          <th></th>
                         </tr>
                       </thead>
                       <tbody>
-                        {header.map((item) => (
-                          <tr>
+                        {header.map((item, key) => (
+                          <tr key={key}>
                             <th>{item}</th>
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:00`],
                                     showNumberOdd
                                   )
@@ -157,7 +185,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:03`],
                                     showNumberOdd
                                   )
@@ -167,7 +195,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:06`],
                                     showNumberOdd
                                   )
@@ -177,7 +205,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:09`],
                                     showNumberOdd
                                   )
@@ -187,7 +215,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:12`],
                                     showNumberOdd
                                   )
@@ -197,7 +225,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:15`],
                                     showNumberOdd
                                   )
@@ -207,7 +235,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:18`],
                                     showNumberOdd
                                   )
@@ -217,7 +245,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:21`],
                                     showNumberOdd
                                   )
@@ -227,7 +255,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:24`],
                                     showNumberOdd
                                   )
@@ -237,7 +265,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:27`],
                                     showNumberOdd
                                   )
@@ -247,7 +275,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:30`],
                                     showNumberOdd
                                   )
@@ -257,7 +285,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:33`],
                                     showNumberOdd
                                   )
@@ -267,7 +295,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:36`],
                                     showNumberOdd
                                   )
@@ -277,7 +305,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:39`],
                                     showNumberOdd
                                   )
@@ -287,7 +315,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:42`],
                                     showNumberOdd
                                   )
@@ -297,7 +325,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:45`],
                                     showNumberOdd
                                   )
@@ -307,7 +335,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:48`],
                                     showNumberOdd
                                   )
@@ -317,7 +345,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:51`],
                                     showNumberOdd
                                   )
@@ -327,7 +355,7 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:54`],
                                     showNumberOdd
                                   )
@@ -337,13 +365,14 @@ export default function MosaicoOdd({ title }) {
                             <td>
                               <div>
                                 {parse(
-                                  formatMosaicoOdd(
+                                  formatMosaicoOddValores(
                                     dadosCorridas[`${item}:57`],
                                     showNumberOdd
                                   )
                                 )}
                               </div>
                             </td>
+                            <td>{addTotalPago(item)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -370,6 +399,7 @@ export default function MosaicoOdd({ title }) {
                           <th>51</th>
                           <th>54</th>
                           <th>57</th>
+                          <th></th>
                         </tr>
                       </tfoot>
                     </table>

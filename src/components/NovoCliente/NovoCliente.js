@@ -1,11 +1,14 @@
-import React, { useState  } from "react";
+import React, { useEffect, useState  } from "react";
 import parse from "html-react-parser";
 import { validateEmail, validateCpf, validateSenha } from './../../util/validacao'
 import InputMask from "react-input-mask";
 import API from "./../../http/api";
+import { useNavigate } from "react-router-dom";
+import TermoPolitica from './TermoPolitica'
+import MyButton from "./../MyButton";
 
 export default function NovoCliente() {
-
+  let navigate = useNavigate();
   const [nome, setNome] = useState("")
   const [telefone, setTelefone] = useState("");
   const [cpf, setCpf] = useState("");
@@ -15,9 +18,12 @@ export default function NovoCliente() {
   const [erroMsg, setErroMsg] = useState();
   const [sucessoMsg, setSucessoMsg] = useState();
 
+  const [load, setLoad] = useState(false);
+
   const cadastrar = () => {
+    setLoad(true)
     setErroMsg("")
-    setSucessoMsg("");
+    setSucessoMsg("");            
     let erros = []
     if (nome === "") {
       erros.push("Preencha o campo nome")
@@ -45,6 +51,7 @@ export default function NovoCliente() {
 
     if (erros.length > 0) {
       setErroMsg(erros.join("<br />"));
+      setLoad(false);
     } else if (erros.length === 0) {
       try {
         API.post(`api/clientes/salvar-usuario`, {
@@ -55,17 +62,20 @@ export default function NovoCliente() {
           senha: senha,
         })
           .then(async (res) => {
-            setSucessoMsg("Cliente cadastrado com sucesso!");
+            setSucessoMsg("Seu cadastro foi realizado com sucesso!");
+            setLoad(false);
+            setTimeout(() => {
+              navigate("/");
+            }, 2000)
           })
           .catch((error) => {
-            console.log(error.message);
             if (error.message !== undefined) {
               Object.entries(error.message).forEach(([key, value]) => erros.push(value));
               setErroMsg(erros.join("<br />"));
             }
-            
+            setLoad(false);            
           });
-      } catch (e) {}
+      } catch (e) {setLoad(false);}
     }
   }
     return (
@@ -181,19 +191,22 @@ export default function NovoCliente() {
                         </span>
                       </label>
                       <div className="container-login100-form-btn">
-                        <a
-                          onClick={() => cadastrar()}
+                        <MyButton
+                          text="Cadastrar"
+                          click={() => cadastrar()}
+                          load={load}
                           className="login100-form-btn btn-primary"
-                        >
-                          Cadastrar
-                        </a>
+                        />
                       </div>
                       <div className="text-center pt-3">
                         <p className="text-dark mb-0">
                           Já possui conta?
-                          <a href="/" className="text-primary ms-1">
-                            Entrar
-                          </a>
+                          <MyButton
+                            text="Entrar"
+                            click={() => navigate("/")}
+                            load={false}
+                            className="text-primary ms-1"
+                          />
                         </p>
                       </div>
                       {erroMsg && (
@@ -229,7 +242,7 @@ export default function NovoCliente() {
                   </button>
                 </div>
                 <div className="modal-body">
-                  <p>Aqui entra o texto da política de uso</p>
+                  <TermoPolitica />
                 </div>
                 <div className="modal-footer">
                   <button className="btn btn-light" data-bs-dismiss="modal">
