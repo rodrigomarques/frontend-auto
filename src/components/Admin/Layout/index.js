@@ -1,66 +1,137 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import MyContext from "./../../../context";
-import { useNavigate, Link  } from "react-router-dom";
+import Manutencao from "./../Manutencao";
+import { useNavigate, Link } from "react-router-dom";
 import API from "./../../../http/api";
 import jwt_decode from "jwt-decode";
+import { browserName, browserVersion } from "react-device-detect";
+import axios from "axios";
 
 export default function Layout({ children }) {
   let navigate = useNavigate();
-  const { token, setToken, user, setUser } = useContext(MyContext);
+  let { token, setToken, user, setUser } = useContext(MyContext);
+  const [manutencao, setManutencao] = useState(false);
+
   const sair = () => {
-    setToken(null)
+    setToken(null);
     localStorage.setItem("tk", null);
-    navigate("/");
-  }
+    localStorage.setItem("user", null);
+    //navigate("/");
+    window.location.href = "/";
+  };
+
+  const checkValidateUser = async () => {
+    let result = await axios.get("https://geolocation-db.com/json/");
+    let ip = result.data.IPv4;
+    API.post(`api/check-login`, {
+      ip: ip,
+      host: browserName + " " + browserVersion,
+    })
+      .then((res) => {
+        if (
+          res.data.entity.emmanutencao !== undefined &&
+          res.data.entity.emmanutencao === 1
+        ) {
+          setManutencao(true);
+        } else {
+          setManutencao(false);
+        }
+        return true;
+      })
+      .catch((e) => {
+        localStorage.setItem("tk", null);
+        localStorage.setItem("user", null);
+        window.location = "/";
+        return true;
+      });
+  };
+
   useEffect(() => {
-    if (token == null || token === undefined || token === "" || user == null) {
+    if (token == null || token === undefined || token === "" || user === null) {
       navigate("/");
       return;
     }
 
     let limite = new Date(user.exp * 1000);
-    let hoje = new Date()
+    let hoje = new Date();
 
     if (limite < hoje) {
-      API.post(`refresh`).then(async (res) => {
+      API.post(`api/refresh`).then(async (res) => {
         if (res.data.access_token !== "") {
           let dados = jwt_decode(res.data.access_token);
-          setUser(dados)
+          setUser(dados);
           setToken(res.data.access_token);
 
           localStorage.setItem("tk", res.data.access_token);
         }
       });
     }
-  }, [])
+
+    if (
+      user.perfil === "CLI" &&
+      (user.plano_id === null || user.dtExpiracao == null)
+    ) {
+      navigate("/admin/planos");
+      return;
+    }
+
+    checkValidateUser();
+    const ajaxCheckValidateUserTime = setInterval(() => {
+      checkValidateUser();
+    }, 30000);
+
+    return (_) => {
+      clearTimeout(ajaxCheckValidateUserTime);
+    };
+  }, []);
+
+  const download = () => {
+    // using Java Script method to get PDF file
+    fetch("/assets/padroes_autobet.pdf").then((response) => {
+      response.blob().then((blob) => {
+        // Creating new object of PDF file
+        const fileURL = window.URL.createObjectURL(blob);
+        // Setting various property values
+        let alink = document.createElement("a");
+        alink.href = fileURL;
+        alink.download = "padroes_autobet.pdf";
+        alink.click();
+      });
+    });
+  };
 
   const validarMenu = () => {
-    if(user.perfil === "CLI" && (user.plano_id === null  || user.dtExpiracao == null )){
-      return false;  
+    if (
+      user.perfil === "CLI" &&
+      (user.plano_id === null || user.dtExpiracao == null)
+    ) {
+      return false;
     }
     return true;
-  }
+  };
 
   if (token == null || token === undefined || token === "") {
-    return <></>
+    return <></>;
   }
 
   return (
     <>
-      <body className="app ltr light-mode horizontal-hover horizontal">
+      <div className="app ltr light-mode horizontal-hover horizontal pb-5">
         <div className="page">
           <div className="page-main">
             <div className="header sticky hor-header">
-              <div className="container-fluid main-container">
+              <div className="container main-container">
                 <div className="d-flex align-items-center">
                   <a
                     aria-label="Hide Sidebar"
                     className="app-sidebar__toggle"
                     data-bs-toggle="sidebar"
                     href="javascript:void(0);"
-                  ></a>
+                  >
+                    {" "}
+                  </a>
                   <div className="responsive-logo">
-                    <a href="/admin/" className="header-logo">
+                    <Link className="header-logo" to="/admin/">
                       <img
                         src="/assets/images/logo-3.png"
                         className="mobile-logo logo-1"
@@ -71,9 +142,9 @@ export default function Layout({ children }) {
                         className="mobile-logo dark-logo-1"
                         alt="logo"
                       />
-                    </a>
+                    </Link>
                   </div>
-                  <a className="col-md-3 logo-horizontal " href="/admin/">
+                  <Link className="col-md-3 logo-horizontal" to="/admin/">
                     <img
                       src="/assets/images/logo.png"
                       className="header-brand-img desktop-logo"
@@ -84,24 +155,29 @@ export default function Layout({ children }) {
                       className="header-brand-img light-logo1"
                       alt="logo"
                     />
-                  </a>
+                  </Link>
                   <div className="col-md-5 main-header-center ms-3 d-none d-lg-block text-center">
-                    {user.perfil === "CLI" && user.plano_id !== null && user.dtExpiracao !== null &&
-                      <div>
-                        Faltam{" "}
-                        <span className="badge bg-default  me-1 mb-1 mt-1">
-                          { user.diaExpiracao }
-                        </span>{" "}
-                        dias para o seu plano expirar
-                      </div>
-                    }
-                    {user.perfil === "CLI" && user.plano_id !== null && user.dtExpiracao == null &&
-                      <div>
-                        Seu plano expirou!
-                        <br />
-                        Realize o pagamento para voltar a ter acesso ao sistema.
-                      </div>
-                    }
+                    {user.perfil === "CLI" &&
+                      user.plano_id !== null &&
+                      user.dtExpiracao !== null && (
+                        <div>
+                          Faltam{" "}
+                          <span className="badge bg-default  me-1 mb-1 mt-1">
+                            {user.diaExpiracao}
+                          </span>{" "}
+                          dias para o seu plano expirar
+                        </div>
+                      )}
+                    {user.perfil === "CLI" &&
+                      user.plano_id !== null &&
+                      user.dtExpiracao == null && (
+                        <div>
+                          Seu plano expirou!
+                          <br />
+                          Realize o pagamento para voltar a ter acesso ao
+                          sistema.
+                        </div>
+                      )}
                   </div>
                   <div className="col-md-4 d-flex order-lg-2 ms-auto header-right-icons">
                     <div className="navbar navbar-collapse responsive-navbar p-0">
@@ -134,65 +210,6 @@ export default function Layout({ children }) {
                               </div>
                             </div>
                           </div>
-                          <div className="dropdown d-md-flex">
-                            <a className="nav-link icon theme-layout nav-link-bg layout-setting">
-                              <span className="dark-layout">
-                                <i className="fe fe-moon"></i>
-                              </span>
-                              <span className="light-layout">
-                                <i className="fe fe-sun"></i>
-                              </span>
-                            </a>
-                          </div>
-                          <div className="dropdown d-md-flex">
-                            <a className="nav-link icon full-screen-link nav-link-bg">
-                              <i
-                                className="fe fe-minimize fullscreen-button"
-                                id="myvideo"
-                              ></i>
-                            </a>
-                          </div>
-                          <div className="dropdown d-md-flex notifications">
-                            <a
-                              className="nav-link icon"
-                              data-bs-toggle="dropdown"
-                            >
-                              <i className="fe fe-bell"></i>
-                              <span className=" pulse"></span>
-                            </a>
-                            <div className="dropdown-menu dropdown-menu-end dropdown-menu-arrow ">
-                              <div className="drop-heading border-bottom">
-                                <div className="d-flex">
-                                  <h6 className="mt-1 mb-0 fs-16 fw-semibold">
-                                    Você tem notificações
-                                  </h6>
-                                  <div className="ms-auto">
-                                    <span className="badge bg-success rounded-pill">
-                                      3
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="notifications-menu">
-                                <a
-                                  className="dropdown-item d-flex"
-                                  href="cart.html"
-                                >
-                                  <div className="me-3 notifyimg  bg-success-gradient brround box-shadow-primary">
-                                    <i className="fe fe-shopping-cart"></i>
-                                  </div>
-                                  <div className="mt-1 wd-80p">
-                                    <h5 className="notification-label mb-1">
-                                      Seu plano está expirando
-                                    </h5>
-                                    <span className="notification-subtext">
-                                      Faltam 5 dias
-                                    </span>
-                                  </div>
-                                </a>
-                              </div>
-                            </div>
-                          </div>
                           <div className="dropdown d-md-flex profile-1">
                             <a
                               href="javascript:void(0);"
@@ -216,18 +233,32 @@ export default function Layout({ children }) {
                                 </div>
                               </div>
                               <div className="dropdown-divider m-0"></div>
-                              <a
+                              <Link
                                 className="dropdown-item"
-                                href="editar-perfil.php"
+                                to="/admin/editar-perfil"
                               >
                                 <i className="dropdown-icon fe fe-user"></i>{" "}
                                 Editar Perfil
-                              </a>
-                              <a className="dropdown-item" href="faq.php">
-                                <i className="dropdown-icon fe fe-alert-triangle"></i>{" "}
-                                Precisa de Ajuda?
-                              </a>
+                              </Link>
+                              <Link
+                                className="dropdown-item"
+                                to="/admin/tutoriais"
+                              >
+                                <i className="dropdown-icon fe fe-video"></i>{" "}
+                                Tutoriais
+                              </Link>
+                              {user.isBot !== undefined && user.isBot === 1 && (
+                                <a
+                                  style={{ cursor: "pointer" }}
+                                  className="dropdown-item"
+                                  onClick={() => download()}
+                                >
+                                  <i className="dropdown-icon fe fe-file-text"></i>{" "}
+                                  Download Padrões
+                                </a>
+                              )}
                               <a
+                                style={{ cursor: "pointer" }}
                                 className="dropdown-item"
                                 onClick={() => sair()}
                               >
@@ -274,17 +305,6 @@ export default function Layout({ children }) {
                   </a>
                 </div>
                 <div className="main-sidemenu is-expanded container">
-                  <div className="slide-left disabled active" id="slide-left">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="#7b8191"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" />
-                    </svg>
-                  </div>
                   <ul className="side-menu open">
                     {!validarMenu() && (
                       <li className="slide">
@@ -305,12 +325,15 @@ export default function Layout({ children }) {
                           </Link>
                         </li>
                         <li className="slide" key="2">
-                          <Link className="side-menu__item" to="/admin/proximas-corridas">
+                          <Link
+                            className="side-menu__item"
+                            to="/admin/proximas-corridas"
+                          >
                             <i className="side-menu__icon fa fa-road"></i>
                             <span className="side-menu__label">
                               Próximas Corridas
-                              </span>
-                            </Link>
+                            </span>
+                          </Link>
                         </li>
                         <li className="slide">
                           <Link
@@ -357,33 +380,81 @@ export default function Layout({ children }) {
                           </Link>
                         </li>
                         <li className="slide">
+                          <Link
+                            className="side-menu__item"
+                            to="/admin/mosaico-valores"
+                          >
+                            <i className="side-menu__icon fa fa-delicious"></i>
+                            <span className="side-menu__label">
+                              Mosaico Valores
+                            </span>
+                          </Link>
+                        </li>
+                        <li className="slide">
                           <Link className="side-menu__item" to="/admin/maximas">
                             <i className="side-menu__icon fa fa-sort-amount-asc"></i>
                             <span className="side-menu__label">Máximas</span>
                           </Link>
                         </li>
+                        <li className="slide d-lg-none d-block">
+                          <Link
+                            to="/admin/editar-perfil"
+                            className="side-menu__item"
+                          >
+                            <i className="side-menu__icon fe fe-user"></i>
+                            <span className="side-menu__label">
+                              Editar Perfil
+                            </span>
+                          </Link>
+                        </li>
+                        <li className="slide slide d-lg-none d-block">
+                          <Link
+                            className="side-menu__item"
+                            to="/admin/tutoriais"
+                          >
+                            <i className="side-menu__icon fe fe-video"></i>
+                            <span className="side-menu__label">Tutoriais</span>
+                          </Link>
+                        </li>
+                        {user.isBot !== undefined && user.isBot === 1 && (
+                          <li className="slide slide d-lg-none d-block">
+                            <a
+                              style={{ cursor: "pointer" }}
+                              onClick={() => download()}
+                              className="side-menu__item"
+                            >
+                              <i className="side-menu__icon fe fe-file-text"></i>
+                              <span className="side-menu__label">
+                                Download Padrões
+                              </span>
+                            </a>
+                          </li>
+                        )}
+                        <li className="slide slide d-lg-none d-block">
+                          <a
+                            style={{ cursor: "pointer" }}
+                            onClick={() => sair()}
+                            className="side-menu__item"
+                          >
+                            <i className="side-menu__icon fe fe-alert-circle"></i>
+                            <span className="side-menu__label">Sair</span>
+                          </a>
+                        </li>
                       </>
                     )}
                   </ul>
-                  <div className="slide-right" id="slide-right">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="#7b8191"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z" />
-                    </svg>
-                  </div>
                 </div>
               </aside>
             </div>
-
-            <div className="main-content app-content mt-0">{children}</div>
+            {manutencao && (
+              <div className="main-content mt-0">
+                <Manutencao title="BET em Manutenção" />
+              </div>
+            )}
+            <div className="main-content mt-0">{children}</div>
           </div>
         </div>
-      </body>
+      </div>
     </>
   );
 }

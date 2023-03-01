@@ -1,36 +1,36 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import API from "./../../../http/api";
 import parse from 'html-react-parser';
+import { formatOdd, percentStyle, formatHour, formatDate, nVezes } from "./../../../util/funcao";
+import useDocumentTitle from './../Title/useDocumentTitle'
+import MyContext from "./../../../context";
+import MyButton from "./../../MyButton";
 
-export default function Dashboard() {
+export default function Dashboard({title}) {
+
+  const { user, setUser } = useContext(MyContext);
+  useDocumentTitle(title);
+
   const [dadosProximaCorrida, setDadosProximaCorrida] = useState({})
+  const [dadosBot, setDadosBot] = useState({});
+  const [botEscolha, setBotEscolha] = useState([]);
   const [maxima, setMaxima] = useState({});
   const [maximaForaPodio, setMaximaForaPodio] = useState({});
   const [corridasNoPodio, setCorridasNoPodio] = useState({});
   const [corridasForaPodio, setCorridasForaPodio] = useState({});
   const [dadosUltimasCorrida, setDadosUltimaCorrida] = useState([]);
+  const [maximaOdd, setMaximaOdd] = useState({})
+  const [podio, setPodio] = useState({
+    piloto1: 0,  piloto2: 0,  piloto3: 0,
+    piloto4: 0,  piloto5: 0,  piloto6: 0,
+    piloto7: 0,  piloto8: 0,  piloto9: 0,
+    piloto10: 0, piloto11: 0, piloto12: 0,
+  });
 
   const getImageRunner = (posicao) => {
     return `/assets/images/grand_prix_${posicao}.png`;
   }
-
-  const formatDate = (data) => {
-    if (data === undefined) return "";
-    data = data.replace("-", "/")
-    let dt = new Date(data);
-    return new Intl.DateTimeFormat("pt-BR").format(dt);
-  };
-  const formatOdd = (odd) => {
-    if (odd >= 12) {
-      return `<span className="tag tag-green">${odd}</span>`;
-    } else if (odd >= 6) {
-      return `<span className="tag tag-yellow">${odd}</span>`;
-    } else {
-      return `<span className="tag tag-red">${odd}</span>`;
-    }
-  };
-
 
   const maxima24HorasCorridas = () => {
     try {
@@ -47,11 +47,33 @@ export default function Dashboard() {
     try {
       API.get(`proxima-corrida`).then((res) => {
         setDadosProximaCorrida(res.data.proximosJogos);
+        setPodio(res.data.podio);
+        setMaximaOdd(res.data.maxima);
       });
     } catch (e) {
       
     }
   }
+
+  const bot = () => {
+    try {
+      API.get(`view/bot-1`).then((res) => {
+        setDadosBot(res.data);
+        if (res.data.botEscolhido === 2 && res.data.showBot2 === 1) {
+          setBotEscolha(res.data.botsugerido2)
+        } else if (res.data.botEscolhido === 3 && res.data.showBot3 === 1) {
+          setBotEscolha(res.data.botsugerido3)
+        } else if (res.data.botEscolhido === 4 && res.data.showBot4 === 1) {
+          setBotEscolha(res.data.botsugerido4)
+        } else if (res.data.botsugerido === 1 && res.data.showBot1 === 1) {
+          setBotEscolha(res.data.botsugerido)
+        } else {
+          setBotEscolha([])
+        }
+        
+      });
+    } catch (e) {}
+  };
 
   const ultimasCorridas = () => {
     try {
@@ -60,30 +82,25 @@ export default function Dashboard() {
       });
     } catch (e) {}
   }
-
-  const ceilPercent = (percent) => {
-    let divisao = Math.trunc(percent / 5)
-    return divisao * 5
-  }
-
-  const percentStyle = (val1, total) => {
-    let vPercent = (val1 / total) * 100
-    return `progress-bar progress-bar-striped bg-primary  w-${ceilPercent(vPercent)}`;
-  }
-
   useEffect(() => {
     
     proximaCorrida();
     ultimasCorridas();
     maxima24HorasCorridas()
+    bot()
 
     const ajaxTime = setInterval(() => {
       proximaCorrida();
       maxima24HorasCorridas();
       ultimasCorridas();
-    }, 45000);
+    }, 10000);
+
+    const ajaxTimeBot = setInterval(() => {
+      bot();
+    }, 15000);
     return (_) => {
       clearTimeout(ajaxTime)
+      clearTimeout(ajaxTimeBot);
     }
     
   }, [])
@@ -93,7 +110,7 @@ export default function Dashboard() {
       <div className="side-app">
         <div className="main-container container-fluid">
           <div className="row mt-5">
-            <div className="col-lg-12 col-md-6 col-sm-12">
+            <div className="col-lg-12 col-sm-12">
               <div className="card overflow-hidden bg-info-transparent">
                 <div className="card-body">
                   <div className="row">
@@ -104,7 +121,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="row">
-            <div className="col-xl-3 col-md-12 col-lg-6">
+            <div className="col-xl-2 col-md-12 col-lg-6">
               <div className="card">
                 <div className="card-header justify-content-center">
                   <div className="card-title">
@@ -154,7 +171,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div className="col-xl-3 col-md-12 col-lg-6">
+            <div className="col-xl-2 col-md-12 col-lg-6">
               <div className="card">
                 <div className="card-header justify-content-center">
                   <div className="card-title">
@@ -204,7 +221,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div className="col-xl-3 col-md-12 col-lg-6">
+            <div className="col-xl-2 col-md-12 col-lg-6">
               <div className="card">
                 <div className="card-header justify-content-center">
                   <div className="card-title">
@@ -254,7 +271,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div className="col-xl-3 col-md-12 col-lg-6">
+            <div className="col-xl-2 col-md-12 col-lg-6">
               <div className="card">
                 <div className="card-header justify-content-center">
                   <div className="card-title">
@@ -304,9 +321,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-          </div>
-          <div className="row">
-            <div className="col-xl-3 col-md-12 col-lg-6">
+            <div className="col-xl-2 col-md-12 col-lg-6">
               <div className="card">
                 <div className="card-header justify-content-center">
                   <div className="card-title">
@@ -356,7 +371,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div className="col-xl-3 col-md-12 col-lg-6">
+            <div className="col-xl-2 col-md-12 col-lg-6">
               <div className="card">
                 <div className="card-header justify-content-center">
                   <div className="card-title">
@@ -406,7 +421,9 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div className="col-xl-3 col-md-12 col-lg-6">
+          </div>
+          <div className="row">
+            <div className="col-xl-2 col-md-12 col-lg-6">
               <div className="card">
                 <div className="card-header justify-content-center">
                   <div className="card-title">
@@ -456,7 +473,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div className="col-xl-3 col-md-12 col-lg-6">
+            <div className="col-xl-2 col-md-12 col-lg-6">
               <div className="card">
                 <div className="card-header justify-content-center">
                   <div className="card-title">
@@ -506,9 +523,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-          </div>
-          <div className="row">
-            <div className="col-xl-3 col-md-12 col-lg-6">
+            <div className="col-xl-2 col-md-12 col-lg-6">
               <div className="card">
                 <div className="card-header justify-content-center">
                   <div className="card-title">
@@ -558,7 +573,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div className="col-xl-3 col-md-12 col-lg-6">
+            <div className="col-xl-2 col-md-12 col-lg-6">
               <div className="card">
                 <div className="card-header justify-content-center">
                   <div className="card-title">
@@ -608,7 +623,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div className="col-xl-3 col-md-12 col-lg-6">
+            <div className="col-xl-2 col-md-12 col-lg-6">
               <div className="card">
                 <div className="card-header justify-content-center">
                   <div className="card-title">
@@ -658,7 +673,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div className="col-xl-3 col-md-12 col-lg-6">
+            <div className="col-xl-2 col-md-12 col-lg-6">
               <div className="card">
                 <div className="card-header justify-content-center">
                   <div className="card-title">
@@ -709,117 +724,646 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
+          {user.isBot !== undefined && user.isBot === 1 && (
+            <>
+              {dadosBot !== undefined && dadosBot.data !== undefined && (
+                <div className="row row-sm">
+                  <div className="col-lg-6">
+                    <div className="card custom-card">
+                      <div className="card-body">
+                        <h3 className="card-title mb-5 text-center">
+                          BOT V/C - Possíveis pilotos no pódio
+                        </h3>
+                        <div>
+                          <div className="text-center mb-3">
+                            <p>
+                              Análise válida para entrada na corrida{" "}
+                              {formatHour(dadosBot.hora)}
+                            </p>
+                            {dadosBot.botvc !== "" &&
+                              dadosBot.botvc.map((itemBot) => {
+                                return (
+                                  <>
+                                    <img
+                                      src={getImageRunner(itemBot)}
+                                      alt={"Bot piloto"}
+                                    />{" "}
+                                  </>
+                                );
+                              })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-6">
+                    <div className="card custom-card">
+                      <div className="card-body">
+                        <h3 className="card-title mb-5 text-center">
+                          BOT Previsão - Possíveis pilotos no pódio
+                        </h3>
+                        {botEscolha !== undefined && botEscolha !== "" && botEscolha.length > 0 && (
+                            <div className="text-center mb-3">
+                              <p>
+                                Análise válida para entrada em previsão ou
+                                tricast na corrida {formatHour(dadosBot.hora)}
+                              </p>
+                              <div className="text-center">
+                                {botEscolha !== undefined && botEscolha !== "" && botEscolha.length > 0 &&
+                                 botEscolha.map((itemBot) => {
+                                    return (
+                                      <>
+                                        <img
+                                          src={getImageRunner(itemBot)}
+                                          alt={"Bot piloto"}
+                                        />{" "}
+                                      </>
+                                    );
+                                  })}
+                              </div>
+                            </div>
+                          )}
+                        {(botEscolha === undefined || botEscolha.length === 0) && (
+                          <div>
+                            <h3 className="card-title mb-5 text-center">
+                              Correndo atrás dos pilotos
+                            </h3>
+                            <div className="text-center">
+                              <img
+                                src="/assets/images/loading.gif"
+                                alt="Loading"
+                                className=" loading-gif"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
           <div className="row row-sm">
             <div className="col-lg-12">
               <div className="card custom-card">
                 <div className="card-body">
                   <div>
-                    <h3 className="card-title mb-5">Próxima Corrida</h3>
+                    <h3 className="card-title mb-5">
+                      Próxima Corrida - {dadosProximaCorrida.horario}
+                    </h3>
                   </div>
 
                   <div className="table-responsive">
-                    <table className="table border text-nowrap text-md-nowrap table-bordered mg-b-0 table-dashboard">
+                    <table className="table border text-nowrap text-md-nowrap table-bordered mg-b-0 table-dashboard table-poxcorrida ">
                       <thead>
                         <tr>
-                          <th>Data</th>
-                          <th>Hora</th>
                           <th>
-                            <img src="/assets/images/grand_prix_1.png" />
+                            <img
+                              src="/assets/images/grand_prix_1.png"
+                              alt={"Piloto 1"}
+                            />
                           </th>
                           <th>
-                            <img src="/assets/images/grand_prix_2.png" />
+                            <img
+                              src="/assets/images/grand_prix_2.png"
+                              alt={"Piloto 2"}
+                            />
                           </th>
                           <th>
-                            <img src="/assets/images/grand_prix_3.png" />
+                            <img
+                              src="/assets/images/grand_prix_3.png"
+                              alt={"Piloto 3"}
+                            />
                           </th>
                           <th>
-                            <img src="/assets/images/grand_prix_4.png" />
+                            <img
+                              src="/assets/images/grand_prix_4.png"
+                              alt={"Piloto 4"}
+                            />
                           </th>
                           <th>
-                            <img src="/assets/images/grand_prix_5.png" />
+                            <img
+                              src="/assets/images/grand_prix_5.png"
+                              alt={"Piloto 5"}
+                            />
                           </th>
                           <th>
-                            <img src="/assets/images/grand_prix_6.png" />
+                            <img
+                              src="/assets/images/grand_prix_6.png"
+                              alt={"Piloto 6"}
+                            />
                           </th>
                           <th>
-                            <img src="/assets/images/grand_prix_7.png" />
+                            <img
+                              src="/assets/images/grand_prix_7.png"
+                              alt={"Piloto 7"}
+                            />
                           </th>
                           <th>
-                            <img src="/assets/images/grand_prix_8.png" />
+                            <img
+                              src="/assets/images/grand_prix_8.png"
+                              alt={"Piloto 8"}
+                            />
                           </th>
                           <th>
-                            <img src="/assets/images/grand_prix_9.png" />
+                            <img
+                              src="/assets/images/grand_prix_9.png"
+                              alt={"Piloto 9"}
+                            />
                           </th>
                           <th>
-                            <img src="/assets/images/grand_prix_10.png" />
+                            <img
+                              src="/assets/images/grand_prix_10.png"
+                              alt={"Piloto 10"}
+                            />
                           </th>
                           <th>
-                            <img src="/assets/images/grand_prix_11.png" />
+                            <img
+                              src="/assets/images/grand_prix_11.png"
+                              alt={"Piloto 11"}
+                            />
                           </th>
                           <th>
-                            <img src="/assets/images/grand_prix_12.png" />
+                            <img
+                              src="/assets/images/grand_prix_12.png"
+                              alt={"Piloto 12"}
+                            />
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <td>{formatDate(dadosProximaCorrida.data)}</td>
-                          <td>{dadosProximaCorrida.horario}</td>
-                          <td>{parse(formatOdd(dadosProximaCorrida.odds1))}</td>
                           <td>
-                            <span className="tag tag-yellow">
-                              {dadosProximaCorrida.odds2}
-                            </span>
+                            <p>
+                              {parse(formatOdd(dadosProximaCorrida.odds1))}
+                              <br />
+                              <br />
+                              <strong>{dadosProximaCorrida.nome1}</strong>
+                              <br />
+                              veio no pódio <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.piloto1}
+                              </span>{" "}
+                              {nVezes(podio.piloto1)} <br />
+                              <br />
+                              Esta Odd já saiu <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.oddpiloto1}
+                              </span>{" "}
+                              {nVezes(podio.oddpiloto1)}
+                              {maximaOdd[`max_${dadosProximaCorrida.odds1}`] !==
+                                undefined && (
+                                <>
+                                  <br />
+                                  Máxima seguida <br />
+                                  <span className="badge bg-default  me-1 mb-1 mt-1">
+                                    {
+                                      maximaOdd[
+                                        `max_${dadosProximaCorrida.odds1}`
+                                      ]
+                                    }
+                                  </span>{" "}
+                                  {nVezes(
+                                    maximaOdd[
+                                      `max_${dadosProximaCorrida.odds1}`
+                                    ]
+                                  )}
+                                </>
+                              )}
+                            </p>
                           </td>
                           <td>
-                            <span className="tag tag-red">
-                              {dadosProximaCorrida.odds3}
-                            </span>
+                            <p>
+                              {parse(formatOdd(dadosProximaCorrida.odds2))}
+                              <br />
+                              <br />
+                              <strong>{dadosProximaCorrida.nome2}</strong>
+                              <br />
+                              veio no pódio <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.piloto2}
+                              </span>{" "}
+                              {nVezes(podio.piloto2)} <br />
+                              <br />
+                              Esta Odd já saiu <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.oddpiloto2}
+                              </span>{" "}
+                              {nVezes(podio.oddpiloto2)}
+                              {maximaOdd[`max_${dadosProximaCorrida.odds2}`] !==
+                                undefined && (
+                                <>
+                                  <br />
+                                  Máxima seguida <br />
+                                  <span className="badge bg-default  me-1 mb-1 mt-1">
+                                    {
+                                      maximaOdd[
+                                        `max_${dadosProximaCorrida.odds2}`
+                                      ]
+                                    }
+                                  </span>{" "}
+                                  {nVezes(
+                                    maximaOdd[
+                                      `max_${dadosProximaCorrida.odds2}`
+                                    ]
+                                  )}
+                                </>
+                              )}
+                            </p>
                           </td>
                           <td>
-                            <span className="tag tag-green">
-                              {dadosProximaCorrida.odds4}
-                            </span>
+                            <p>
+                              {parse(formatOdd(dadosProximaCorrida.odds3))}
+                              <br />
+                              <br />
+                              <strong>{dadosProximaCorrida.nome3}</strong>
+                              <br />
+                              veio no pódio <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.piloto3}
+                              </span>{" "}
+                              {nVezes(podio.piloto3)} <br />
+                              <br />
+                              Esta Odd já saiu <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.oddpiloto3}
+                              </span>{" "}
+                              {nVezes(podio.oddpiloto3)}
+                              {maximaOdd[`max_${dadosProximaCorrida.odds3}`] !==
+                                undefined && (
+                                <>
+                                  <br />
+                                  Máxima seguida <br />
+                                  <span className="badge bg-default  me-1 mb-1 mt-1">
+                                    {
+                                      maximaOdd[
+                                        `max_${dadosProximaCorrida.odds3}`
+                                      ]
+                                    }
+                                  </span>{" "}
+                                  {nVezes(
+                                    maximaOdd[
+                                      `max_${dadosProximaCorrida.odds3}`
+                                    ]
+                                  )}
+                                </>
+                              )}
+                            </p>
                           </td>
                           <td>
-                            <span className="tag tag-yellow">
-                              {dadosProximaCorrida.odds5}
-                            </span>
+                            <p>
+                              {parse(formatOdd(dadosProximaCorrida.odds4))}
+                              <br />
+                              <br />
+                              <strong>{dadosProximaCorrida.nome4}</strong>
+                              <br />
+                              veio no pódio <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.piloto4}
+                              </span>{" "}
+                              {nVezes(podio.piloto4)} <br />
+                              <br />
+                              Esta Odd já saiu <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.oddpiloto4}
+                              </span>{" "}
+                              {nVezes(podio.oddpiloto4)}
+                              {maximaOdd[`max_${dadosProximaCorrida.odds4}`] !==
+                                undefined && (
+                                <>
+                                  <br />
+                                  Máxima seguida <br />
+                                  <span className="badge bg-default  me-1 mb-1 mt-1">
+                                    {
+                                      maximaOdd[
+                                        `max_${dadosProximaCorrida.odds4}`
+                                      ]
+                                    }
+                                  </span>{" "}
+                                  {nVezes(
+                                    maximaOdd[
+                                      `max_${dadosProximaCorrida.odds4}`
+                                    ]
+                                  )}
+                                </>
+                              )}
+                            </p>
                           </td>
                           <td>
-                            <span className="tag tag-red">
-                              {dadosProximaCorrida.odds6}
-                            </span>
+                            <p>
+                              {parse(formatOdd(dadosProximaCorrida.odds5))}
+                              <br />
+                              <br />
+                              <strong>{dadosProximaCorrida.nome5}</strong>
+                              <br />
+                              veio no pódio <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.piloto5}
+                              </span>{" "}
+                              {nVezes(podio.piloto5)} <br />
+                              <br />
+                              Esta Odd já saiu <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.oddpiloto5}
+                              </span>{" "}
+                              {nVezes(podio.oddpiloto5)}
+                              {maximaOdd[`max_${dadosProximaCorrida.odds5}`] !==
+                                undefined && (
+                                <>
+                                  <br />
+                                  Máxima seguida <br />
+                                  <span className="badge bg-default  me-1 mb-1 mt-1">
+                                    {
+                                      maximaOdd[
+                                        `max_${dadosProximaCorrida.odds5}`
+                                      ]
+                                    }
+                                  </span>{" "}
+                                  {nVezes(
+                                    maximaOdd[
+                                      `max_${dadosProximaCorrida.odds5}`
+                                    ]
+                                  )}
+                                </>
+                              )}
+                            </p>
                           </td>
                           <td>
-                            <span className="tag tag-green">
-                              {dadosProximaCorrida.odds7}
-                            </span>
+                            <p>
+                              {parse(formatOdd(dadosProximaCorrida.odds6))}
+                              <br />
+                              <br />
+                              <strong>{dadosProximaCorrida.nome6}</strong>
+                              <br />
+                              veio no pódio <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.piloto6}
+                              </span>{" "}
+                              {nVezes(podio.piloto6)} <br />
+                              <br />
+                              Esta Odd já saiu <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.oddpiloto6}
+                              </span>{" "}
+                              {nVezes(podio.oddpiloto6)}
+                              {maximaOdd[`max_${dadosProximaCorrida.odds6}`] !==
+                                undefined && (
+                                <>
+                                  <br />
+                                  Máxima seguida <br />
+                                  <span className="badge bg-default  me-1 mb-1 mt-1">
+                                    {
+                                      maximaOdd[
+                                        `max_${dadosProximaCorrida.odds6}`
+                                      ]
+                                    }
+                                  </span>{" "}
+                                  {nVezes(
+                                    maximaOdd[
+                                      `max_${dadosProximaCorrida.odds6}`
+                                    ]
+                                  )}
+                                </>
+                              )}
+                            </p>
                           </td>
                           <td>
-                            <span className="tag tag-yellow">
-                              {dadosProximaCorrida.odds8}
-                            </span>
+                            <p>
+                              {parse(formatOdd(dadosProximaCorrida.odds7))}
+                              <br />
+                              <br />
+                              <strong>{dadosProximaCorrida.nome7}</strong>
+                              <br />
+                              veio no pódio <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.piloto7}
+                              </span>{" "}
+                              {nVezes(podio.piloto7)} <br />
+                              <br />
+                              Esta Odd já saiu <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.oddpiloto7}
+                              </span>{" "}
+                              {nVezes(podio.oddpiloto7)}
+                              {maximaOdd[`max_${dadosProximaCorrida.odds7}`] !==
+                                undefined && (
+                                <>
+                                  <br />
+                                  Máxima seguida <br />
+                                  <span className="badge bg-default  me-1 mb-1 mt-1">
+                                    {
+                                      maximaOdd[
+                                        `max_${dadosProximaCorrida.odds7}`
+                                      ]
+                                    }
+                                  </span>{" "}
+                                  {nVezes(
+                                    maximaOdd[
+                                      `max_${dadosProximaCorrida.odds7}`
+                                    ]
+                                  )}
+                                </>
+                              )}
+                            </p>
                           </td>
                           <td>
-                            <span className="tag tag-red">
-                              {dadosProximaCorrida.odds9}
-                            </span>
+                            <p>
+                              {parse(formatOdd(dadosProximaCorrida.odds8))}
+                              <br />
+                              <br />
+                              <strong>{dadosProximaCorrida.nome8}</strong>
+                              <br />
+                              veio no pódio <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.piloto8}
+                              </span>{" "}
+                              {nVezes(podio.piloto8)} <br />
+                              <br />
+                              Esta Odd já saiu <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.oddpiloto8}
+                              </span>{" "}
+                              {nVezes(podio.oddpiloto8)}
+                              {maximaOdd[`max_${dadosProximaCorrida.odds8}`] !==
+                                undefined && (
+                                <>
+                                  <br />
+                                  Máxima seguida <br />
+                                  <span className="badge bg-default  me-1 mb-1 mt-1">
+                                    {
+                                      maximaOdd[
+                                        `max_${dadosProximaCorrida.odds8}`
+                                      ]
+                                    }
+                                  </span>{" "}
+                                  {nVezes(
+                                    maximaOdd[
+                                      `max_${dadosProximaCorrida.odds8}`
+                                    ]
+                                  )}
+                                </>
+                              )}
+                            </p>
                           </td>
                           <td>
-                            <span className="tag tag-green">
-                              {dadosProximaCorrida.odds10}
-                            </span>
+                            <p>
+                              {parse(formatOdd(dadosProximaCorrida.odds9))}
+                              <br />
+                              <br />
+                              <strong>{dadosProximaCorrida.nome9}</strong>
+                              <br />
+                              veio no pódio <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.piloto9}
+                              </span>{" "}
+                              {nVezes(podio.piloto9)} <br />
+                              <br />
+                              Esta Odd já saiu <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.oddpiloto9}
+                              </span>{" "}
+                              {nVezes(podio.oddpiloto9)}
+                              {maximaOdd[`max_${dadosProximaCorrida.odds9}`] !==
+                                undefined && (
+                                <>
+                                  <br />
+                                  Máxima seguida <br />
+                                  <span className="badge bg-default  me-1 mb-1 mt-1">
+                                    {
+                                      maximaOdd[
+                                        `max_${dadosProximaCorrida.odds9}`
+                                      ]
+                                    }
+                                  </span>{" "}
+                                  {nVezes(
+                                    maximaOdd[
+                                      `max_${dadosProximaCorrida.odds9}`
+                                    ]
+                                  )}
+                                </>
+                              )}
+                            </p>
                           </td>
                           <td>
-                            <span className="tag tag-yellow">
-                              {dadosProximaCorrida.odds11}
-                            </span>
+                            <p>
+                              {parse(formatOdd(dadosProximaCorrida.odds10))}
+                              <br />
+                              <br />
+                              <strong>{dadosProximaCorrida.nome10}</strong>
+                              <br />
+                              veio no pódio <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.piloto10}
+                              </span>{" "}
+                              {nVezes(podio.piloto10)} <br />
+                              <br />
+                              Esta Odd já saiu <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.oddpiloto10}
+                              </span>{" "}
+                              {nVezes(podio.oddpiloto10)}
+                              {maximaOdd[
+                                `max_${dadosProximaCorrida.odds10}`
+                              ] !== undefined && (
+                                <>
+                                  <br />
+                                  Máxima seguida <br />
+                                  <span className="badge bg-default  me-1 mb-1 mt-1">
+                                    {
+                                      maximaOdd[
+                                        `max_${dadosProximaCorrida.odds10}`
+                                      ]
+                                    }
+                                  </span>{" "}
+                                  {nVezes(
+                                    maximaOdd[
+                                      `max_${dadosProximaCorrida.odds10}`
+                                    ]
+                                  )}
+                                </>
+                              )}
+                            </p>
                           </td>
                           <td>
-                            <span className="tag tag-red">
-                              {dadosProximaCorrida.odds12}
-                            </span>
+                            <p>
+                              {parse(formatOdd(dadosProximaCorrida.odds11))}
+                              <br />
+                              <br />
+                              <strong>{dadosProximaCorrida.nome11}</strong>
+                              <br />
+                              veio no pódio <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.piloto11}
+                              </span>{" "}
+                              {nVezes(podio.piloto11)} <br />
+                              <br />
+                              Esta Odd já saiu <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.oddpiloto11}
+                              </span>{" "}
+                              {nVezes(podio.oddpiloto11)}
+                              {maximaOdd[
+                                `max_${dadosProximaCorrida.odds11}`
+                              ] !== undefined && (
+                                <>
+                                  <br />
+                                  Máxima seguida <br />
+                                  <span className="badge bg-default  me-1 mb-1 mt-1">
+                                    {
+                                      maximaOdd[
+                                        `max_${dadosProximaCorrida.odds11}`
+                                      ]
+                                    }
+                                  </span>{" "}
+                                  {nVezes(
+                                    maximaOdd[
+                                      `max_${dadosProximaCorrida.odds11}`
+                                    ]
+                                  )}
+                                </>
+                              )}
+                            </p>
+                          </td>
+                          <td>
+                            <p>
+                              {parse(formatOdd(dadosProximaCorrida.odds12))}
+                              <br />
+                              <br />
+                              <strong>{dadosProximaCorrida.nome12}</strong>
+                              <br />
+                              veio no pódio <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.piloto12}
+                              </span>{" "}
+                              {nVezes(podio.piloto12)} <br />
+                              <br />
+                              Esta Odd já saiu <br />
+                              <span className="badge bg-default  me-1 mb-1 mt-1">
+                                {podio.oddpiloto12}
+                              </span>{" "}
+                              {nVezes(podio.oddpiloto12)}
+                              {maximaOdd[
+                                `max_${dadosProximaCorrida.odds12}`
+                              ] !== undefined && (
+                                <>
+                                  <br />
+                                  Máxima seguida <br />
+                                  <span className="badge bg-default  me-1 mb-1 mt-1">
+                                    {
+                                      maximaOdd[
+                                        `max_${dadosProximaCorrida.odds12}`
+                                      ]
+                                    }
+                                  </span>{" "}
+                                  {nVezes(
+                                    maximaOdd[
+                                      `max_${dadosProximaCorrida.odds12}`
+                                    ]
+                                  )}
+                                </>
+                              )}
+                            </p>
                           </td>
                         </tr>
                       </tbody>
@@ -855,25 +1399,17 @@ export default function Dashboard() {
                         {dadosUltimasCorrida.map((item) => (
                           <tr key={item.gameid}>
                             <td>{formatDate(item.data)}</td>
-                            <td>
-                              {item.hora2}:{item.minuto}
-                            </td>
+                            <td>{item.hora}</td>
                             <td>
                               <img src={getImageRunner(item.primeiro)} />{" "}
                               <img src={getImageRunner(item.segundo)} />{" "}
                               <img src={getImageRunner(item.terceiro)} />
                             </td>
-                            <td>
-                              {parse(formatOdd(item.oddsprimeiro))}
-                            </td>
-                            <td>
-                              {parse(formatOdd(item.oddssegundo))}
-                            </td>
-                            <td>
-                              {parse(formatOdd(item.oddsterceiro))}
-                            </td>
-                            <td>{ item.oddsprevisao }</td>
-                            <td>{ item.oddstricast }</td>
+                            <td>{parse(formatOdd(item.oddsprimeiro))}</td>
+                            <td>{parse(formatOdd(item.oddssegundo))}</td>
+                            <td>{parse(formatOdd(item.oddsterceiro))}</td>
+                            <td>{item.previsao}</td>
+                            <td>{item.tricast}</td>
                           </tr>
                         ))}
                       </tbody>

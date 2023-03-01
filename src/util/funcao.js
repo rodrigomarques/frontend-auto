@@ -2,6 +2,15 @@ const getImageRunner = (posicao) => {
   return `/assets/images/grand_prix_${posicao}.png`;
 };
 
+  const totalDias = (mes, dias) => {
+    let mesEmDias = 0
+    if (mes !== undefined && mes > 0) {
+      mesEmDias = mes * 30
+    }
+
+    return dias + mesEmDias
+}
+  
 const formatMosaicoOdd = (posicoes, show = "all") => {
   if (posicoes === undefined) return "";
   if (typeof posicoes !== "object") return posicoes;
@@ -20,6 +29,24 @@ const formatMosaicoOdd = (posicoes, show = "all") => {
   });
   return formatString;
 };
+
+
+const formatMosaicoOddValores = (oddPaga, show = 1) => {
+  if (oddPaga === undefined) return "";
+  if (typeof oddPaga !== "object") return oddPaga;
+  let formatString = "";
+  oddPaga.map((elem, index) => {
+    let posicaoExibir = index + 1
+    if (show === posicaoExibir) {
+      if(show === 1) formatString += formatOddValorPrevisao(elem);
+      if (show === 2) formatString += formatOddValorTricast(elem);
+      formatString += " ";
+    }
+    return formatString;
+  });
+  return formatString;
+};
+
 
 const formatMosaico = (posicoes, show = "all") => {
   if (posicoes === undefined) return "";
@@ -43,9 +70,16 @@ const formatMosaico = (posicoes, show = "all") => {
 
 const formatDate = (data) => {
   if (data === undefined) return "";
-  data = data.replace("-", "/");
+  if (data === "") return "";
+  data = data.replace(/-/g, "/");
   let dt = new Date(data);
   return new Intl.DateTimeFormat("pt-BR").format(dt);
+};
+
+const formatHour = (hora) => {
+  if (hora === undefined) return "";
+  if (hora === "") return "";
+  return hora.substring(0,5)
 };
 
 const getNumberOnly = (str) => {
@@ -70,6 +104,9 @@ const fn = (value, currencyStyle) => {
 };
 
 const formatOdd = (odd) => {
+  if (odd === "undefined" || odd === undefined)
+    return ""
+  
   if (odd >= 12) {
     return `<span className="tag tag-green">${odd}</span>`;
   } else if (odd > 6) {
@@ -79,9 +116,36 @@ const formatOdd = (odd) => {
   }
 };
 
+const formatOddValorPrevisao = (odd) => {
+  if (odd === "undefined" || odd === undefined) return "";
+  if (odd >= 230) {
+    return `<span className="tag tag-green">${odd}</span>`;
+  } else if (odd >= 100) {
+    return `<span className="tag tag-yellow">${odd}</span>`;
+  } else {
+    return `<span className="tag tag-red">${odd}</span>`;
+  }
+};
+
+const formatOddValorTricast = (odd) => {
+  if (odd === "undefined" || odd === undefined) return "";
+  if (odd >= 3000) {
+    return `<span className="tag tag-green">${odd}</span>`;
+  } else if (odd >= 1000) {
+    return `<span className="tag tag-yellow">${odd}</span>`;
+  } else {
+    return `<span className="tag tag-red">${odd}</span>`;
+  }
+};
+
 const ceilPercent = (percent) => {
   let divisao = Math.trunc(percent / 5);
-  return divisao * 5;
+  let result = divisao * 5;
+  //35, 55,  85
+  if (result === 35) result = 40
+  else if (result === 55) result = 60
+  else if (result === 85) result = 90
+  return result;
 };
 
 const percentStyle = (val1, total) => {
@@ -91,4 +155,25 @@ const percentStyle = (val1, total) => {
   )}`;
 };
 
-export { getImageRunner, formatMosaicoOdd, formatMosaico, formatDate, formatOdd, fn, getNumberOnly, percentStyle };
+const nVezes = (num) => {
+  if (num === undefined) return ""
+  if (num === "") return "";
+  if (num === 1 || num === "1") return "vez"
+  if (num > 1 || num === 0) return "vezes";
+  return "";
+};
+
+export {
+  getImageRunner,
+  formatMosaicoOdd,
+  formatMosaico,
+  formatDate,
+  formatOdd,
+  fn,
+  getNumberOnly,
+  percentStyle,
+  formatMosaicoOddValores,
+  formatHour,
+  nVezes,
+  totalDias,
+};

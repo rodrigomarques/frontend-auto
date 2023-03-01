@@ -1,12 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import MyContext from "./../../../context";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import API from "./../../../http/api";
-import { getNumberOnly  } from "./../../../util/funcao";
+import { totalDias, getNumberOnly, fn } from "./../../../util/funcao";
+import jwt_decode from "jwt-decode";
+import useDocumentTitle from "./../Title/useDocumentTitle";
 
-export default function Checkout() {
-  const { user, setUser } = useContext(MyContext);
+export default function Checkout({ title }) {
+  useDocumentTitle(title);
+
+  const { token, setToken, user, setUser } = useContext(MyContext);
+  let navigate = useNavigate();
   const { state } = useLocation();
+
+  const [pagamentoEmAberto, setPagamentoEmAberto] = useState([]);
 
   const [cep, setCep] = useState();
   const [rua, setRua] = useState();
@@ -20,19 +27,112 @@ export default function Checkout() {
   const [pix, setPix] = useState(false);
   const [imagePix, setImagePix] = useState("");
   const [urlPix, setUrlPix] = useState("");
-
+  const [cupomDesconto, setCupomDesconto] = useState("");
+  const [cupom, setCupom] = useState({});
 
   const [nomeCartao, setNomeCartao] = useState();
   
   const [numCartao, setNumCartao] = useState();
   const [cpfTitular, setCpfTitular] = useState();
+  const [valor, setValor] = useState(0);
 
   const { plano } = state;
+  
+  useEffect(() => {
+    API.get(`api/admin/cupom/${cupomDesconto}`)
+      .then((res) => {
+        setCupom({})
+        let pCupom = res.data.entity;
+        if (pCupom) {
+          setCupom(pCupom)
+          let novoValor =
+            pCupom.tipo_desconto !== undefined && pCupom.tipo_desconto.toUpperCase() === "PERCENT"
+              ? (plano.valor * (100 - pCupom.valor)) / 100
+              : plano.valor - pCupom.valor;
+          setValor(novoValor)
+
+          document.getElementById("idCupomDesconto").value = pCupom.id
+          
+        } else {
+          document.getElementById("idCupomDesconto").value = 0
+          setValor(plano.valor)
+        }
+      })
+      .catch((e) => {
+        setCupom({})
+        setValor(plano.valor)
+        let cupDesc = document.getElementById("idCupomDesconto")
+        if(cupDesc)
+          cupDesc.value = 0
+      });
+  }, [cupomDesconto])
 
   useEffect(() => {
     carregar()
+
+    API.get(`api/pagamento-em-aberto`)
+      .then((res) => {
+        console.log(res.data.entity);
+        if (res.data.entity !== undefined) {
+          setPagamentoEmAberto(res.data.entity);
+        } 
+      })
+      .catch((e) => {
+        
+      });
+    
+    
+    const validarPagamentoId = setInterval(() => {
+        API.post(`api/refresh`).then(async (res) => {
+          if (res.data.access_token !== "") {
+            let dados = jwt_decode(res.data.access_token);
+            setUser(dados);
+            setToken(res.data.access_token);
+
+            localStorage.setItem("tk", res.data.access_token);
+
+            if (
+              dados.perfil === "CLI" &&
+              dados.plano_id !== null &&
+              dados.dtExpiracao !== null
+            ) {
+              navigate("/admin/");
+            }
+          }
+        });
+      }, 4000);
+
+    return (_) => clearTimeout(validarPagamentoId);
+
   }, []);
+
+  useEffect(() => {
+    if (cep !== undefined && cep !== "") {
+      let novoCep = getNumberOnly(cep)
+      fetch(`https://viacep.com.br/ws/${novoCep}/json/`)
+        .then((value) => value.json())
+        .then((result) => {
+          if (result !== "") {
+            setRua(result.logradouro)
+            setBairro(result.bairro);
+            setCidade(result.localidade);
+            setUf(result.uf)
+          }
+        })
+        .catch(err => {
+
+        });
+    }
+  }, [cep]);
+
+  useEffect(() => {
+    let novoCpf = getNumberOnly(cpfTitular)
+    setCpfTitular(novoCpf);
+  }, [cpfTitular]);
+  
   const carregar = async () => {
+    setValor(plano.valor)
+
     const script = document.createElement("script");
     script.src = "https://sdk.mercadopago.com/js/v2";
     script.async = true;
@@ -75,22 +175,27 @@ export default function Checkout() {
 
   const pagarBoleto = async () => {
     let key = process.env.PUBLIC_KEY_TEST;
-    let nomeCompleto = user.nome
-    let nomeQuebrado = nomeCompleto.split(" ")
-    let nome = nomeQuebrado[0]
-    let sobrenome = "Nao Informado"
+    let nomeCompleto = user.nome;
+    let nomeQuebrado = nomeCompleto.split(" ");
+    let nome = nomeQuebrado[0];
+    let sobrenome = "Nao Informado";
     if (nomeQuebrado[1] !== undefined) {
       sobrenome = nomeQuebrado[1];
     }
 
-    let messageErro = validarEndereco()
+    let messageErro = validarEndereco();
     if (messageErro.length > 0) {
-      alert(messageErro.join("\n"))
+      alert(messageErro.join("\n"));
       return null;
     }
     let newCep = getNumberOnly(cep);
+    //transaction_amount: "" + plano.valor,
+    let cupomid = null
+    if (cupom && cupom.id) {
+      cupomid = cupom.id;
+    }
     let objParam = {
-      transaction_amount: "" + plano.valor,
+      transaction_amount: "" + valor,
       description: "Autobet " + plano.plano,
       email: user.email,
       nome: nome,
@@ -98,13 +203,15 @@ export default function Checkout() {
       number: user.cpf,
       cep: newCep,
       rua: rua,
+      complemento: complemento,
       numero: numero,
       bairro: bairro,
       cidade: cidade,
       uf: uf,
       plano_id: plano.id,
+      cupom_id: cupomid
     };
-    
+
     API.post(`api/boleto`, objParam)
       .then((res) => {
         if (res.data.entity.link !== undefined) {
@@ -112,7 +219,6 @@ export default function Checkout() {
         } else {
           alert("Boleto não gerado, entre em contato com o administrador");
         }
- 
       })
       .catch((e) => {
         alert("Boleto não gerado, entre em contato com o administrador");
@@ -134,20 +240,27 @@ export default function Checkout() {
       return null;
     }
     let newCep = getNumberOnly(cep);
+    let cupomid = null;
+    if (cupom && cupom.id) {
+      cupomid = cupom.id;
+    }
+
     let objParam = {
-      transaction_amount: "" + plano.valor,
+      transaction_amount: "" + valor,
       description: "Autobet " + plano.plano,
       email: user.email,
       nome: nome,
       sobrenome: sobrenome,
       number: user.cpf,
       cep: newCep,
+      complemento: complemento,
       rua: rua,
       numero: numero,
       bairro: bairro,
       cidade: cidade,
       uf: uf,
       plano_id: plano.id,
+      cupom_id: cupomid,
     };
     
     API.post(`api/pix`, objParam)
@@ -158,7 +271,6 @@ export default function Checkout() {
           setImagePix(`data:image/png;base64,${res.data.entity.qr_code_base64}`);
           setUrlPix(res.data.entity.qr_code);          
         } else {
-          alert("NADA")
           alert("PIX não gerado, entre em contato com o administrador");
         }
       })
@@ -173,13 +285,13 @@ export default function Checkout() {
   const scriptLoaded = async () => {
     if (mercadopago === undefined) {
       mercadopago = await new window.MercadoPago(
-        "TEST-8f313f06-ddfe-4ea1-b5a8-ef95dbdf6de0"
+        "APP_USR-be28598e-fbd1-405b-8230-e20b814bf3df"
       );
     }
 
     if (cardForm === undefined) {
       cardForm = await mercadopago.cardForm({
-        amount: "" + plano.valor,
+        amount: "" + valor,
         autoMount: true,
         form: {
           id: "formcheckout",
@@ -229,27 +341,50 @@ export default function Checkout() {
           },
           onSubmit: async function (event) {
             event.preventDefault();
+            let nvCep = document.getElementById("formCep").value
+            let rua = document.getElementById("formRua").value;
+            let complemento = document.getElementById("formComplemento").value;
+            let numero = document.getElementById("formNumero").value;
+            let bairro = document.getElementById("formBairro").value;
+            let cidade = document.getElementById("formCidade").value;
+            let uf = document.getElementById("formUf").value;
+            let idCupomDesconto = document.getElementById("idCupomDesconto").value
+            //console.log(JSON.parse(cardForm.getCardFormData()));
 
             const {
               paymentMethodId: payment_method_id,
               issuerId: issuer_id,
               cardholderEmail: email,
+              token: cardToken,
               amount,
               installments,
               identificationNumber,
               identificationType,
+              cardholderName : nome,
             } = cardForm.getCardFormData();
 
+            let newCep = getNumberOnly(nvCep);
+            
             API.post("/api/pagar", {
-              token: cardForm.token,
+              token_cc: cardToken,
               issuer_id,
               payment_method_id,
               transaction_amount: Number(amount),
               installments: Number(installments),
               description: "Plano Autobet",
               email,
+              cep: newCep,
+              rua: rua,
+              complemento: complemento,
+              numero: numero,
+              bairro: bairro,
+              cidade: cidade,
+              uf: uf,
+              cardholderName: nome,
+              plano_id: plano.id,
               type: identificationType,
               number: identificationNumber,
+              cupom_id : idCupomDesconto,
               payer: {
                 email,
                 identification: {
@@ -260,9 +395,20 @@ export default function Checkout() {
             })
               .then((result) => {
                 console.log(result);
+                if (result.data.entity.status === "ok") {
+                  alert(
+                    "Pagamento realizado com sucesso, aguarde a confirmação do pagamento!"
+                  );
+                } else {
+                  alert(
+                    "Pagamento não realizado, entre em contato com o administrador"
+                  );
+                }
               })
               .catch((err) => {
-                console.log("Erro");
+                alert(
+                  "Pagamento não realizado, entre em contato com o administrador"
+                );
                 console.log(err);
               });
           },
@@ -273,54 +419,32 @@ export default function Checkout() {
     //console.log(await cardForm.createCardToken());
   };
 
-  const pagar = async () => {
-    /*console.log(cardForm);
-    let cardValues = await cardForm.createCardToken();
+  const buscarPagamento = (fatura) => {
+    if (fatura.url_externo !== null) {
+      return (
+        <div>
+          <a target="_blank" href={fatura.url_externo} className="btn btn-info">
+            <i className="fa fa-barcode"></i> Ver boleto
+          </a>
+        </div>
+      );
+    } else if (fatura.qr_code_base64 !== undefined && fatura.qr_code_base64 !== null) {
+      let image = `data:image/png;base64,${fatura.qr_code_base64}`;
+      return (
+        <p className="text-center">
+          <img src={image} width="35%" />
+        </p>
+      );
+    }
 
-    const {
-      paymentMethodId: payment_method_id,
-      issuerId: issuer_id,
-      cardholderEmail: email,
-      amount,
-      installments,
-      identificationNumber,
-      identificationType,
-    } = cardForm.getCardFormData();
-    console.log(cardForm.getCardFormData());
-
-    alert(issuer_id);
-    alert(installments);
-    /*
-    API.post("/api/pagar", {
-      token: cardValues.token,
-      issuer_id,
-      payment_method_id,
-      transaction_amount: Number(amount),
-      installments: Number(installments),
-      description: "Plano Autobet",
-      email,
-      type: identificationType,
-      number: identificationNumber,
-      payer: {
-        email,
-        identification: {
-          type: identificationType,
-          number: identificationNumber,
-        },
-      },
-    })
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((err) => {
-        console.log("Erro");
-        console.log(err);
-      });*/
+    return <></>
   };
+
+
 
   return (
     <>
-      <form id="formcheckout">
+      <form id="formcheckout" className="mb-5">
         <div className="side-app">
           <div className="main-container container-fluid">
             <div className="row mt-5">
@@ -329,9 +453,13 @@ export default function Checkout() {
                   <div className="card-body">
                     <div className="row">
                       <h1 className="page-title text-center">
-                        Falta pouco! Você escolheu o plano{plano.plano}
+                        Falta pouco! Você escolheu o {plano.plano}.{" "}
                         <strong>
-                          {plano.recorrencia_mes} Mês(es) - R$ {plano.valor}
+                          {totalDias(
+                            plano.recorrencia_mes,
+                            plano.recorrencia_dias
+                          )}{" "}
+                          dias de acesso - R$ {fn(valor)}
                         </strong>
                         .
                       </h1>
@@ -343,6 +471,28 @@ export default function Checkout() {
                 </div>
               </div>
             </div>
+            {pagamentoEmAberto && pagamentoEmAberto.length > 0 && (
+              <div className="row">
+                <div className="col-xl-12 col-lg-12 col-md-12">
+                  <div className="card">
+                    <div className="card-body">
+                      <div className="alert alert-info">
+                        Você possui faturas de pagamento em aberto:
+                        {pagamentoEmAberto.map((fatura) => {
+                          return (
+                            <div key={fatura.id}>
+                              <b>{fatura.metodo_pagamento}</b> no valor de R${" "}
+                              {fn(fatura.valor_pago)} {buscarPagamento(fatura)}
+                              <br />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="row">
               <div className="col-xl-6 col-lg-12 col-md-12">
                 <div className="card">
@@ -361,6 +511,7 @@ export default function Checkout() {
                             className="form-control"
                             placeholder="Endereço"
                             value={cep}
+                            id="formCep"
                             onChange={(e) => setCep(e.target.value)}
                           />
                         </div>
@@ -374,6 +525,7 @@ export default function Checkout() {
                             type="text"
                             className="form-control"
                             placeholder="Endereço"
+                            id="formRua"
                             value={rua}
                             onChange={(e) => setRua(e.target.value)}
                           />
@@ -388,6 +540,7 @@ export default function Checkout() {
                             type="text"
                             className="form-control"
                             placeholder="Número"
+                            id="formNumero"
                             value={numero}
                             onChange={(e) => setNumero(e.target.value)}
                           />
@@ -400,6 +553,7 @@ export default function Checkout() {
                             type="text"
                             className="form-control"
                             placeholder="Complemento"
+                            id="formComplemento"
                             value={complemento}
                             onChange={(e) => setComplemento(e.target.value)}
                           />
@@ -414,6 +568,7 @@ export default function Checkout() {
                             type="text"
                             className="form-control"
                             placeholder="Bairro"
+                            id="formBairro"
                             value={bairro}
                             onChange={(e) => setBairro(e.target.value)}
                           />
@@ -428,6 +583,7 @@ export default function Checkout() {
                             type="text"
                             className="form-control"
                             placeholder="Cidade"
+                            id="formCidade"
                             value={cidade}
                             onChange={(e) => setCidade(e.target.value)}
                           />
@@ -442,6 +598,7 @@ export default function Checkout() {
                             className="form-control form-select select2"
                             data-bs-placeholder="Select"
                             value={uf}
+                            id="formUf"
                             onChange={(e) => setUf(e.target.value)}
                           >
                             <option value="AC">Acre</option>
@@ -481,8 +638,27 @@ export default function Checkout() {
               </div>
               <div className="col-xl-6 col-lg-12 col-md-12">
                 <div className="card">
+                  <div className="card-header">
+                    <h3 className="card-title">Dados do Pagamento</h3>
+                  </div>
                   <div className="card-body">
                     <div className="card-pay">
+                      <div className="form-group">
+                        <label className="form-label">Cupom de Desconto</label>
+                        <input
+                          value={cupomDesconto}
+                          onChange={(e) => setCupomDesconto(e.target.value)}
+                          type="text"
+                          name="cupomDesconto"
+                          className="form-control"
+                          placeholder="Possui um código? Digite aqui"
+                        />
+                        <input
+                          type="hidden"
+                          id="idCupomDesconto"
+                          className="form-control"
+                        />
+                      </div>
                       <ul className="tabs-menu nav">
                         <li className="">
                           <a
@@ -490,7 +666,8 @@ export default function Checkout() {
                             className="active"
                             data-bs-toggle="tab"
                           >
-                            <i className="fa fa-credit-card"></i> Credit Card
+                            <i className="fa fa-credit-card"></i> Cartão de
+                            Crédito
                           </a>
                         </li>
                         <li>
@@ -663,7 +840,7 @@ export default function Checkout() {
                           {pix && (
                             <>
                               <p className="text-center">
-                                <img src={ imagePix } width="35%" />
+                                <img src={imagePix} width="35%" />
                               </p>
                               <div className="input-group">
                                 <input
@@ -673,10 +850,13 @@ export default function Checkout() {
                                   value={urlPix}
                                   id="urlPix"
                                 />
-                                <span className="input-group-text btn btn-primary" onClick={() => {
-                                  navigator.clipboard.writeText(urlPix)
-                                  alert("Pix copiado")
-                                }}>
+                                <span
+                                  className="input-group-text btn btn-primary"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(urlPix);
+                                    alert("Pix copiado");
+                                  }}
+                                >
                                   Copiar
                                 </span>
                               </div>

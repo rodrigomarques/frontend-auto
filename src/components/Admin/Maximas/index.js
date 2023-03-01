@@ -3,7 +3,7 @@ import API from "./../../../http/api";
 import Header from "./header";
 import { percentStyle } from "./../../../util/funcao";
 
-export default function Maxima() {
+export default function Maxima(props) {
   const [maxima, setMaxima] = useState({});
   const [maximaForaPodio, setMaximaForaPodio] = useState({});
   const [corridasNoPodio, setCorridasNoPodio] = useState({});
@@ -59,7 +59,7 @@ export default function Maxima() {
     <>
       <div className="side-app">
         <div className="main-container container-fluid">
-          <Header />
+          <Header title={props.title} link={1} />
           <div className="row">
             <div className="col-xl-3 col-md-12 col-lg-6">
               <div className="card">
@@ -123,18 +123,30 @@ export default function Maxima() {
                       <tbody>
                         <tr>
                           <td>1º</td>
-                          <td>{corridasForaPodioPorPiloto.piloto1.pos1.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto1.pos1.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto1.pos1.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto1.pos1.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>2º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto1.pos2.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto1.pos2.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto1.pos2.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto1.pos2.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>3º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto1.pos3.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto1.pos3.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto1.pos3.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto1.pos3.maxima}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -204,18 +216,30 @@ export default function Maxima() {
                       <tbody>
                         <tr>
                           <td>1º</td>
-                          <td>{corridasForaPodioPorPiloto.piloto2.pos1.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto2.pos1.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto2.pos1.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto2.pos1.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>2º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto2.pos2.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto2.pos2.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto2.pos2.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto2.pos2.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>3º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto2.pos3.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto2.pos3.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto2.pos3.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto2.pos3.maxima}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -285,18 +309,30 @@ export default function Maxima() {
                       <tbody>
                         <tr>
                           <td>1º</td>
-                          <td>{corridasForaPodioPorPiloto.piloto3.pos1.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto3.pos1.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto3.pos1.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto3.pos1.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>2º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto3.pos2.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto3.pos2.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto3.pos2.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto3.pos2.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>3º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto3.pos3.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto3.pos3.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto3.pos3.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto3.pos3.maxima}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -366,18 +402,30 @@ export default function Maxima() {
                       <tbody>
                         <tr>
                           <td>1º</td>
-                          <td>{corridasForaPodioPorPiloto.piloto4.pos1.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto4.pos1.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto4.pos1.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto4.pos1.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>2º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto4.pos2.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto4.pos2.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto4.pos2.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto4.pos2.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>3º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto4.pos3.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto4.pos3.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto4.pos3.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto4.pos3.maxima}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -449,18 +497,30 @@ export default function Maxima() {
                       <tbody>
                         <tr>
                           <td>1º</td>
-                          <td>{corridasForaPodioPorPiloto.piloto5.pos1.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto5.pos1.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto5.pos1.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto5.pos1.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>2º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto5.pos2.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto5.pos2.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto5.pos2.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto5.pos2.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>3º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto5.pos3.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto5.pos3.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto5.pos3.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto5.pos3.maxima}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -530,18 +590,30 @@ export default function Maxima() {
                       <tbody>
                         <tr>
                           <td>1º</td>
-                          <td>{corridasForaPodioPorPiloto.piloto6.pos1.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto6.pos1.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto6.pos1.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto6.pos1.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>2º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto6.pos2.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto6.pos2.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto6.pos2.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto6.pos2.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>3º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto6.pos3.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto6.pos3.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto6.pos3.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto6.pos3.maxima}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -611,18 +683,30 @@ export default function Maxima() {
                       <tbody>
                         <tr>
                           <td>1º</td>
-                          <td>{corridasForaPodioPorPiloto.piloto7.pos1.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto7.pos1.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto7.pos1.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto7.pos1.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>2º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto7.pos2.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto7.pos2.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto7.pos2.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto7.pos2.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>3º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto7.pos3.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto7.pos3.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto7.pos3.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto7.pos3.maxima}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -692,18 +776,30 @@ export default function Maxima() {
                       <tbody>
                         <tr>
                           <td>1º</td>
-                          <td>{corridasForaPodioPorPiloto.piloto8.pos1.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto8.pos1.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto8.pos1.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto8.pos1.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>2º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto8.pos2.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto8.pos2.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto8.pos2.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto8.pos2.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>3º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto8.pos3.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto8.pos3.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto8.pos3.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto8.pos3.maxima}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -775,18 +871,30 @@ export default function Maxima() {
                       <tbody>
                         <tr>
                           <td>1º</td>
-                          <td>{corridasForaPodioPorPiloto.piloto9.pos1.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto9.pos1.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto9.pos1.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto9.pos1.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>2º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto9.pos2.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto9.pos2.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto9.pos2.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto9.pos2.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>3º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto9.pos3.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto9.pos3.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto9.pos3.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto9.pos3.maxima}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -799,7 +907,10 @@ export default function Maxima() {
                 <div className="card-header justify-content-center">
                   <div className="card-title">
                     <p className="text-center mt-0 mb-0">
-                      <img alt="piloto" src="/assets/images/grand_prix_10.png" />
+                      <img
+                        alt="piloto"
+                        src="/assets/images/grand_prix_10.png"
+                      />
                     </p>
                   </div>
                 </div>
@@ -856,18 +967,30 @@ export default function Maxima() {
                       <tbody>
                         <tr>
                           <td>1º</td>
-                          <td>{corridasForaPodioPorPiloto.piloto10.pos1.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto10.pos1.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto10.pos1.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto10.pos1.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>2º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto10.pos2.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto10.pos2.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto10.pos2.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto10.pos2.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>3º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto10.pos3.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto10.pos3.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto10.pos3.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto10.pos3.maxima}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -880,7 +1003,10 @@ export default function Maxima() {
                 <div className="card-header justify-content-center">
                   <div className="card-title">
                     <p className="text-center mt-0 mb-0">
-                      <img alt="piloto" src="/assets/images/grand_prix_11.png" />
+                      <img
+                        alt="piloto"
+                        src="/assets/images/grand_prix_11.png"
+                      />
                     </p>
                   </div>
                 </div>
@@ -937,18 +1063,30 @@ export default function Maxima() {
                       <tbody>
                         <tr>
                           <td>1º</td>
-                          <td>{corridasForaPodioPorPiloto.piloto11.pos1.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto11.pos1.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto11.pos1.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto11.pos1.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>2º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto11.pos2.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto11.pos2.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto11.pos2.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto11.pos2.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>3º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto11.pos3.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto11.pos3.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto11.pos3.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto11.pos3.maxima}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -961,7 +1099,10 @@ export default function Maxima() {
                 <div className="card-header justify-content-center">
                   <div className="card-title">
                     <p className="text-center mt-0 mb-0">
-                      <img alt="piloto" src="/assets/images/grand_prix_12.png" />
+                      <img
+                        alt="piloto"
+                        src="/assets/images/grand_prix_12.png"
+                      />
                     </p>
                   </div>
                 </div>
@@ -1018,18 +1159,30 @@ export default function Maxima() {
                       <tbody>
                         <tr>
                           <td>1º</td>
-                          <td>{corridasForaPodioPorPiloto.piloto12.pos1.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto12.pos1.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto12.pos1.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto12.pos1.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>2º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto12.pos2.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto12.pos2.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto12.pos2.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto12.pos2.maxima}
+                          </td>
                         </tr>
                         <tr>
                           <th>3º</th>
-                          <td>{corridasForaPodioPorPiloto.piloto12.pos3.atual}</td>
-                          <td>{corridasForaPodioPorPiloto.piloto12.pos3.maxima}</td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto12.pos3.atual}
+                          </td>
+                          <td>
+                            {corridasForaPodioPorPiloto.piloto12.pos3.maxima}
+                          </td>
                         </tr>
                       </tbody>
                     </table>

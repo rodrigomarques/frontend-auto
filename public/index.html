@@ -5,10 +5,21 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AutoBet Virtual - Sistema de análises de automobilismo virtual na Bet365" />
+    <meta property="og:description"
+      content="AutoBet Virtual é um sistema completo de análise de mosaico, tabela de máximas, resultados 24h por dia e muito mais dados sobre o mercado de Automobilismo Virtual na Bet365." />
+    <meta property="og:url" content="https://autobetvirtual.com.br/" />
+    <meta property="og:site_name" content="AutoBet Virtual - Sistema de análises de automobilismo virtual na Bet365" />
+    <meta property="og:image" content="https://autobetvirtual.com.br/wp-content/uploads/2022/05/avatarAutoBet-1.png" />
+    <meta property="og:image:width" content="400" />
+    <meta property="og:image:height" content="400" />
+    <meta property="og:image:type" content="image/png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@autobetvirtual" />
+    <meta name="twitter:label1" content="Est. tempo de leitura" />
+    <meta name="twitter:data1" content="7 minutos" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -25,7 +36,87 @@
     <link href="%PUBLIC_URL%/assets/css/icons.css" rel="stylesheet" />
     
     <link id="theme" rel="stylesheet" type="text/css" media="all" href="%PUBLIC_URL%/assets/colors/color1.css" />
+    <style>
+      .horizontalMenucontainer .responsive-navbar.navbar .navbar-collapse{
+          justify-content: end;
+      }
 
+      .btn-success{
+        color: #fff !important;
+      }
+
+      .table-odd tr {
+        text-align: center;
+      }
+
+      .tag-green {
+        background-color: #328c2e!important;
+        color: #fff;
+      }
+
+      .tag-yellow{
+        background-color: #dba704!important;
+        color: #fff;
+      }
+
+      .table-poxcorrida p{
+        font-size: 11px;
+      }
+      .loading-gif{
+        width: 300px;
+        max-width: 100%;
+      }
+      .horizontal .horizontal-main .container{
+        max-width: 100% !important;
+      }
+      .side-menu .side-menu__icon{
+        top: 2px!important;
+      }
+
+      @media screen and (max-width: 1045px) and (min-width: 992px){
+        .horizontal .side-menu>li>a {
+            padding: 16px 3px!important;
+            font-size: 13px!important;
+        }
+      }
+
+
+      @media (min-width: 992px){
+        .horizontal .side-menu{
+          justify-content: center;
+        }
+        .horizontal .hor-header .container {
+          max-width: 1140px!important;    
+          padding-right: 0.75rem;    
+          padding-left: 0.75rem;
+        }
+      }
+
+      @media (max-width: 991px){
+        .mobile-logo{
+          width: 110px;
+        }
+        .side-app {
+          padding: 65px 15px 0 15px!important;
+        }
+      }
+
+      .video-responsive {
+        overflow: hidden;
+        padding-bottom: 56.25%;
+        position: relative;
+        height: 0;
+      }
+
+      .video-responsive iframe {
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+      }
+
+    </style>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -35,7 +126,7 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>Sistema AUTOBET</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -95,5 +186,15 @@
       <script src="%PUBLIC_URL%/assets/js/form-wizard.js"></script>
       <script src="%PUBLIC_URL%/assets/js/themeColors.js"></script>
       <script src="%PUBLIC_URL%/assets/js/custom.js"></script>
+
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-223737654-2"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-223737654-2');
+      </script>
   </body>
 </html>
