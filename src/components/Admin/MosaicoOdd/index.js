@@ -11,8 +11,8 @@ export default function MosaicoOdd({ title }) {
   const [dadosCorridas, setDadosCorridas] = useState([]);
   const [header, setHeader] = useState([]);
   const [showNumberOdd, setShowNumberOdd] = useState("all");
-
-
+  const [horaAtual, setHoraAtual] = useState(0);
+  
   const ultimasCorridas = () => {
     try {
       API.get(`ultimas-corrida-odds`).then(async (res) => {
@@ -21,30 +21,36 @@ export default function MosaicoOdd({ title }) {
     } catch (e) {}
   }
 
-  useEffect(() => {
+  const configHeader = () => {
     let values = [];
     var dt1 = new Date().toLocaleString("en-GB", {
-      hour: "2-digit",
-      timeZone: "Europe/London",
-    });
-    //var data = new Date(dt1)
-    //console.log(data);
-    for (let i = 0; i < 24; i++) {
-      let hora = dt1 - i //data.getHours() - i;
-      
-      if (hora < 0) {
-        hora = hora + 24 ;
+        hour: "2-digit",
+        timeZone: "Europe/London",
+      });
+    if (horaAtual !== dt1) {
+      for (let i = 0; i < 24; i++) {
+        let hora = dt1 - i; //data.getHours() - i;
+
+        if (hora < 0) {
+          hora = hora + 24;
+        }
+        if (hora < 10) hora = "0" + hora;
+        values.push(hora);
       }
-      if(hora < 10) hora = "0" + hora;
-      values.push(hora);
+      values.reverse();
+      setHeader(values);
+      setHoraAtual(dt1)
     }
-    values.reverse();
-    setHeader(values)
+  }
+
+  useEffect(() => {
+    configHeader()
     ultimasCorridas();
 
     
     const ajaxTime = setInterval(() => {
       ultimasCorridas();
+      configHeader()
     }, 45000);
 
     return (_) => clearTimeout(ajaxTime)
@@ -59,7 +65,7 @@ export default function MosaicoOdd({ title }) {
       <div className="side-app">
         <div className="main-container container-fluid">
           <div className="row mt-5">
-            <div className="col-lg-12 col-md-6 col-sm-12">
+            <div className="col-lg-12 col-sm-12">
               <div className="card overflow-hidden bg-info-transparent">
                 <div className="card-body">
                   <div className="row">
@@ -108,11 +114,11 @@ export default function MosaicoOdd({ title }) {
                       </a>
                     </div>
                   </div>
-                  {Object.entries(dadosCorridas).forEach(([chave, valor]) => {
+                  {Object.entries(dadosCorridas).forEach(([chave, valor]) => (
                     <tr>
                       <th>{chave}</th>
-                    </tr>;
-                  })}
+                    </tr>
+                  ))}
                   <div className="table-responsive">
                     <table className="table border text-nowrap text-md-nowrap table-bordered mg-b-0 table-odd">
                       <thead>

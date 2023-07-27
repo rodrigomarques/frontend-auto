@@ -27,8 +27,11 @@ api.interceptors.response.use(
     if (error.response !== undefined && error.response.status !== undefined) {
       let statusCode = error.response.status;
       let message = "";
-      if (statusCode === 401)
+      if (statusCode === 401 || statusCode === 403) {
         window.location = "/";
+        localStorage.setItem("tk", null);
+        localStorage.setItem("user", null);
+      }
       
       if (error.response.data !== undefined)
         message = error.response.data.errors;

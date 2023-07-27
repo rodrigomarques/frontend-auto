@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import MyContext from "./../../../context";
 import { useLocation, useNavigate } from "react-router-dom";
 import API from "./../../../http/api";
-import { getNumberOnly, fn } from "./../../../util/funcao";
+import { totalDias, getNumberOnly, fn } from "./../../../util/funcao";
 import jwt_decode from "jwt-decode";
 import useDocumentTitle from "./../Title/useDocumentTitle";
 
@@ -27,15 +27,53 @@ export default function Checkout({ title }) {
   const [pix, setPix] = useState(false);
   const [imagePix, setImagePix] = useState("");
   const [urlPix, setUrlPix] = useState("");
-
+  const [cupomDesconto, setCupomDesconto] = useState("");
+  const [cupom, setCupom] = useState({});
 
   const [nomeCartao, setNomeCartao] = useState();
   
   const [numCartao, setNumCartao] = useState();
   const [cpfTitular, setCpfTitular] = useState();
+  const [valor, setValor] = useState(0);
+
+  let valorPag = 0
 
   const { plano } = state;
   
+  useEffect(() => {
+    API.get(`api/admin/cupom/${cupomDesconto}`)
+      .then((res) => {
+        setCupom({})
+        let pCupom = res.data.entity;
+        if (pCupom) {
+          setCupom(pCupom)
+          let novoValor =
+            pCupom.tipo_desconto !== undefined && pCupom.tipo_desconto.toUpperCase() === "PERCENT"
+              ? (plano.valor * (100 - pCupom.valor)) / 100
+              : plano.valor - pCupom.valor;
+          setValor(novoValor)
+
+          document.getElementById("idCupomDesconto").value = pCupom.id
+          
+        } else {
+          document.getElementById("idCupomDesconto").value = 0
+          setValor(plano.valor)
+        }
+      })
+      .catch((e) => {
+        setCupom({})
+        setValor(plano.valor)
+        let cupDesc = document.getElementById("idCupomDesconto")
+        if(cupDesc)
+          cupDesc.value = 0
+      });
+  }, [cupomDesconto])
+
+  useEffect(() => {
+    //alert(valor)
+    valorPag = valor
+  }, [valor])
+
   useEffect(() => {
     carregar()
 
@@ -87,6 +125,9 @@ export default function Checkout({ title }) {
             setCidade(result.localidade);
             setUf(result.uf)
           }
+        })
+        .catch(err => {
+
         });
     }
   }, [cep]);
@@ -97,12 +138,16 @@ export default function Checkout({ title }) {
   }, [cpfTitular]);
   
   const carregar = async () => {
-    const script = document.createElement("script");
-    script.src = "https://sdk.mercadopago.com/js/v2";
-    script.async = true;
-    script.onload = async () => await scriptLoaded();
+    setValor(plano.valor)
 
-    document.body.appendChild(script);
+    valorPag = plano.valor
+
+    const script = document.createElement("script");
+      script.src = "https://sdk.mercadopago.com/js/v2";
+      script.async = true;
+      script.onload = async () => await scriptLoaded();
+      document.body.appendChild(script);
+    //alert(valor)
 
     return () => {
       let iframe = document.querySelector("iframe");
@@ -139,22 +184,27 @@ export default function Checkout({ title }) {
 
   const pagarBoleto = async () => {
     let key = process.env.PUBLIC_KEY_TEST;
-    let nomeCompleto = user.nome
-    let nomeQuebrado = nomeCompleto.split(" ")
-    let nome = nomeQuebrado[0]
-    let sobrenome = "Nao Informado"
+    let nomeCompleto = user.nome;
+    let nomeQuebrado = nomeCompleto.split(" ");
+    let nome = nomeQuebrado[0];
+    let sobrenome = "Nao Informado";
     if (nomeQuebrado[1] !== undefined) {
       sobrenome = nomeQuebrado[1];
     }
 
-    let messageErro = validarEndereco()
+    let messageErro = validarEndereco();
     if (messageErro.length > 0) {
-      alert(messageErro.join("\n"))
+      alert(messageErro.join("\n"));
       return null;
     }
     let newCep = getNumberOnly(cep);
+    //transaction_amount: "" + plano.valor,
+    let cupomid = null
+    if (cupom && cupom.id) {
+      cupomid = cupom.id;
+    }
     let objParam = {
-      transaction_amount: "" + plano.valor,
+      transaction_amount: "" + valor,
       description: "Autobet " + plano.plano,
       email: user.email,
       nome: nome,
@@ -162,14 +212,15 @@ export default function Checkout({ title }) {
       number: user.cpf,
       cep: newCep,
       rua: rua,
-      complemento : complemento,
+      complemento: complemento,
       numero: numero,
       bairro: bairro,
       cidade: cidade,
       uf: uf,
       plano_id: plano.id,
+      cupom_id: cupomid
     };
-    
+
     API.post(`api/boleto`, objParam)
       .then((res) => {
         if (res.data.entity.link !== undefined) {
@@ -177,7 +228,6 @@ export default function Checkout({ title }) {
         } else {
           alert("Boleto não gerado, entre em contato com o administrador");
         }
- 
       })
       .catch((e) => {
         alert("Boleto não gerado, entre em contato com o administrador");
@@ -199,21 +249,27 @@ export default function Checkout({ title }) {
       return null;
     }
     let newCep = getNumberOnly(cep);
+    let cupomid = null;
+    if (cupom && cupom.id) {
+      cupomid = cupom.id;
+    }
+
     let objParam = {
-      transaction_amount: "" + plano.valor,
+      transaction_amount: "" + valor,
       description: "Autobet " + plano.plano,
       email: user.email,
       nome: nome,
       sobrenome: sobrenome,
       number: user.cpf,
       cep: newCep,
-      complemento : complemento,
+      complemento: complemento,
       rua: rua,
       numero: numero,
       bairro: bairro,
       cidade: cidade,
       uf: uf,
       plano_id: plano.id,
+      cupom_id: cupomid,
     };
     
     API.post(`api/pix`, objParam)
@@ -244,7 +300,7 @@ export default function Checkout({ title }) {
 
     if (cardForm === undefined) {
       cardForm = await mercadopago.cardForm({
-        amount: "" + plano.valor,
+        amount: "" + valorPag,
         autoMount: true,
         form: {
           id: "formcheckout",
@@ -262,7 +318,8 @@ export default function Checkout({ title }) {
           },
           installments: {
             id: "form-checkout__installments",
-            placeholder: "Parcelas",
+            placeholder: "1",
+            value: 1
           },
           cardNumber: {
             id: "form-checkout__cardNumber",
@@ -272,7 +329,6 @@ export default function Checkout({ title }) {
             id: "form-checkout__securityCode",
             placeholder: "Código de segurança",
           },
-
           identificationType: {
             id: "form-checkout__identificationType",
             placeholder: "Tipo de documento",
@@ -290,18 +346,21 @@ export default function Checkout({ title }) {
           onFormMounted: (error) => {
             if (error)
               return console.warn("Form Mounted handling error: ", error);
-            console.log("Form mounted");
+            console.log("Form mounted - ok");
           },
           onSubmit: async function (event) {
             event.preventDefault();
+            console.log("Dados ok")
             let nvCep = document.getElementById("formCep").value
             let rua = document.getElementById("formRua").value;
             let complemento = document.getElementById("formComplemento").value;
             let numero = document.getElementById("formNumero").value;
             let bairro = document.getElementById("formBairro").value;
             let cidade = document.getElementById("formCidade").value;
-            let uf = document.getElementById("formUf").value;            
-            //console.log(JSON.parse(cardForm.getCardFormData()));
+            let uf = document.getElementById("formUf").value;
+            let idCupomDesconto = document.getElementById("idCupomDesconto").value
+            console.log(cardForm.getCardFormData());
+
             const {
               paymentMethodId: payment_method_id,
               issuerId: issuer_id,
@@ -335,6 +394,7 @@ export default function Checkout({ title }) {
               plano_id: plano.id,
               type: identificationType,
               number: identificationNumber,
+              cupom_id : idCupomDesconto,
               payer: {
                 email,
                 identification: {
@@ -364,6 +424,8 @@ export default function Checkout({ title }) {
           },
         },
       });
+
+      //console.log(await cardForm.createCardToken());
     }
 
     //console.log(await cardForm.createCardToken());
@@ -394,7 +456,7 @@ export default function Checkout({ title }) {
 
   return (
     <>
-      <form id="formcheckout">
+      <form id="formcheckout" className="mb-5">
         <div className="side-app">
           <div className="main-container container-fluid">
             <div className="row mt-5">
@@ -403,9 +465,13 @@ export default function Checkout({ title }) {
                   <div className="card-body">
                     <div className="row">
                       <h1 className="page-title text-center">
-                        Falta pouco! Você escolheu o plano{plano.plano}
+                        Falta pouco! Você escolheu o {plano.plano}.{" "}
                         <strong>
-                          {plano.recorrencia_mes} Mês(es) - R$ {fn(plano.valor)}
+                          {totalDias(
+                            plano.recorrencia_mes,
+                            plano.recorrencia_dias
+                          )}{" "}
+                          dias de acesso - R$ {fn(valor)}
                         </strong>
                         .
                       </h1>
@@ -427,7 +493,8 @@ export default function Checkout({ title }) {
                         {pagamentoEmAberto.map((fatura) => {
                           return (
                             <div key={fatura.id}>
-                              <b>{fatura.metodo_pagamento}</b> no valor de R$ {fn(fatura.valor)} {buscarPagamento(fatura)}
+                              <b>{fatura.metodo_pagamento}</b> no valor de R${" "}
+                              {fn(fatura.valor_pago)} {buscarPagamento(fatura)}
                               <br />
                             </div>
                           );
@@ -583,8 +650,27 @@ export default function Checkout({ title }) {
               </div>
               <div className="col-xl-6 col-lg-12 col-md-12">
                 <div className="card">
+                  <div className="card-header">
+                    <h3 className="card-title">Dados do Pagamento Autobet</h3>
+                  </div>
                   <div className="card-body">
                     <div className="card-pay">
+                      <div className="form-group">
+                        <label className="form-label">Cupom de Desconto</label>
+                        <input
+                          value={cupomDesconto}
+                          onChange={(e) => setCupomDesconto(e.target.value)}
+                          type="text"
+                          name="cupomDesconto"
+                          className="form-control"
+                          placeholder="Possui um código? Digite aqui"
+                        />
+                        <input
+                          type="hidden"
+                          id="idCupomDesconto"
+                          className="form-control"
+                        />
+                      </div>
                       <ul className="tabs-menu nav">
                         <li className="">
                           <a
@@ -592,7 +678,8 @@ export default function Checkout({ title }) {
                             className="active"
                             data-bs-toggle="tab"
                           >
-                            <i className="fa fa-credit-card"></i> Cartão de Crédito
+                            <i className="fa fa-credit-card"></i> Cartão de
+                            Crédito
                           </a>
                         </li>
                         <li>
@@ -709,7 +796,9 @@ export default function Checkout({ title }) {
                             style={{ display: "none" }}
                             name="installments"
                             id="form-checkout__installments"
-                          ></select>
+                          >
+                            <option value="1">1</option>
+                          </select>
                           <input
                             type="submit"
                             value="Pagar"

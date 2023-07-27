@@ -2,6 +2,15 @@ const getImageRunner = (posicao) => {
   return `/assets/images/grand_prix_${posicao}.png`;
 };
 
+  const totalDias = (mes, dias) => {
+    let mesEmDias = 0
+    if (mes !== undefined && mes > 0) {
+      mesEmDias = mes * 30
+    }
+
+    return dias + mesEmDias
+}
+  
 const formatMosaicoOdd = (posicoes, show = "all") => {
   if (posicoes === undefined) return "";
   if (typeof posicoes !== "object") return posicoes;
@@ -59,6 +68,35 @@ const formatMosaico = (posicoes, show = "all") => {
   return formatString;
 };
 
+const classPilotoCor = (posicao) => {
+  if(posicao <= 4){
+    return "vermelho";
+  }else if(posicao <= 8){
+    return "amarelo";
+  }else{
+    return "roxo";
+  }
+}
+const formatMosaicoCores = (posicoes, show = "all") => {
+  if (posicoes === undefined) return "";
+  if (typeof posicoes !== "object") return posicoes;
+  let formatString = "";
+    posicoes.map((elem, index) => {
+        if (show !== "all") {
+            if (show > index) {
+                formatString += "<span class='" +classPilotoCor(elem)+ "'>" +elem+ "</span>";
+                formatString += " ";
+            }
+        } else {
+            formatString += "<span class='" +classPilotoCor(elem)+ "'>" +elem+ "</span>";
+            formatString += " ";
+      }
+      return formatString;
+  });
+  return formatString;
+};
+
+
 const formatDate = (data) => {
   if (data === undefined) return "";
   if (data === "") return "";
@@ -95,6 +133,9 @@ const fn = (value, currencyStyle) => {
 };
 
 const formatOdd = (odd) => {
+  if (odd === "undefined" || odd === undefined)
+    return ""
+  
   if (odd >= 12) {
     return `<span className="tag tag-green">${odd}</span>`;
   } else if (odd > 6) {
@@ -105,7 +146,8 @@ const formatOdd = (odd) => {
 };
 
 const formatOddValorPrevisao = (odd) => {
-  if (odd >= 300) {
+  if (odd === "undefined" || odd === undefined) return "";
+  if (odd >= 230) {
     return `<span className="tag tag-green">${odd}</span>`;
   } else if (odd >= 100) {
     return `<span className="tag tag-yellow">${odd}</span>`;
@@ -115,7 +157,8 @@ const formatOddValorPrevisao = (odd) => {
 };
 
 const formatOddValorTricast = (odd) => {
-  if (odd >= 4000) {
+  if (odd === "undefined" || odd === undefined) return "";
+  if (odd >= 3000) {
     return `<span className="tag tag-green">${odd}</span>`;
   } else if (odd >= 1000) {
     return `<span className="tag tag-yellow">${odd}</span>`;
@@ -141,6 +184,14 @@ const percentStyle = (val1, total) => {
   )}`;
 };
 
+const nVezes = (num) => {
+  if (num === undefined) return ""
+  if (num === "") return "";
+  if (num === 1 || num === "1") return "vez"
+  if (num > 1 || num === 0) return "vezes";
+  return "";
+};
+
 export {
   getImageRunner,
   formatMosaicoOdd,
@@ -152,4 +203,7 @@ export {
   percentStyle,
   formatMosaicoOddValores,
   formatHour,
+  nVezes,
+  totalDias,
+  formatMosaicoCores
 };

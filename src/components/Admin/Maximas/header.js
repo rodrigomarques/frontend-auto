@@ -9,7 +9,7 @@ export default function Header(props) {
   return (
     <>
       <div className="row mt-5">
-        <div className="col-lg-12 col-md-6 col-sm-12">
+        <div className="col-lg-12 col-sm-12">
           <div className="card overflow-hidden bg-info-transparent">
             <div className="card-body">
               <div className="row">

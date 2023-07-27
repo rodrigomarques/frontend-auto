@@ -1,9 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import MyContext from "./../../context";
 import API from "./../../http/api";
 import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import MyButton from "./../MyButton";
+import axios from "axios";
+import { browserName, browserVersion } from "react-device-detect";
 
 export default function Login() {
 
@@ -11,34 +13,61 @@ export default function Login() {
   const { token, setToken, user, setUser } = useContext(MyContext);
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState("");
+  const [ ip, setIp] = useState("")
   const [load, setLoad] = useState(false);
+
+  useEffect(() => {
+
+    const carregarIp = async () => {
+      let result = await axios.get("https://geolocation-db.com/json/");
+      setIp(result.data.IPv4)
+    }
+    carregarIp()
+  }, [])
 
   const efetuarLogin = () => {
     setLoad(true)
 
     API.post(`api/login`, {
       email: email,
-      password: senha
-    }).then((res) => {
-      if (res.data.access_token !== "") {
-        let dados = jwt_decode(res.data.access_token);
-        setUser(dados)
-        setToken(res.data.access_token);
-        
-        localStorage.setItem("tk", res.data.access_token);
+      password: senha,
+      ip: ip,
+      host : browserName + " " + browserVersion
+    })
+      .then((res) => {
+        if (res.data.access_token !== "") {
+          let dados = jwt_decode(res.data.access_token);
+          setUser(dados);
+          setToken(res.data.access_token);
 
-        if (dados.perfil === "CLI" && (dados.plano_id === null || dados.dtExpiracao == null))
-          navigate("/admin/planos");
-        else
-          navigate("/admin/");
-      }
-      setLoad(false);
-    })
-    .catch(e => {
-      alert("Dados inválidos")
-      setLoad(false);
-      return false;
-    })
+          localStorage.setItem("tk", res.data.access_token);
+          localStorage.setItem("user", JSON.stringify(dados));
+
+          if (
+            dados.perfil === "CLI" &&
+            (dados.plano_id === null || dados.dtExpiracao == null)
+          ) {
+            window.location.href = "/admin/planos"
+          } else {
+            if (dados.aceite === 1) {
+              window.location.href = "/admin/"
+            } else {
+              window.location.href = "/admin/";
+              //window.location.href = "/admin/tutoriais";
+            }
+            //navigate("/admin");
+          }
+        } else {
+          setLoad(false);
+          alert("Dados inválidos");
+        }
+        return false;
+      })
+      .catch((e) => {
+        alert("Dados inválidos");
+        setLoad(false);
+        return false;
+      });
     return false
   }
 
@@ -105,7 +134,7 @@ export default function Login() {
                     <div className="container-login100-form-btn">
                       <MyButton
                         text="Entrar"
-                        click={() => efetuarLogin()}
+                        click={() => efetuarLogin() }
                         load={load}
                         className="login100-form-btn btn-primary"
                       />

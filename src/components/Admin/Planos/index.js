@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fn } from "./../../../util/funcao";
+import { fn, totalDias } from "./../../../util/funcao";
 
 import { useNavigate } from "react-router-dom";
 import API from "./../../../http/api";
@@ -8,6 +8,7 @@ import useDocumentTitle from "./../Title/useDocumentTitle";
 
 export default function Planos({ title }) {
   useDocumentTitle(title);
+
   let navigate = useNavigate();
   const [planos, setPlanos] = useState([]);
 
@@ -29,7 +30,7 @@ export default function Planos({ title }) {
 
   return (
     <>
-      <div className="side-app">
+      <div className="side-app" >
         <div className="main-container container-fluid">
           <div className="row justify-content-center">
             {planos.length > 0 &&
@@ -88,7 +89,7 @@ export default function Planos({ title }) {
                     <div className=" br-5 bg-white mt-0 shadow text-center">
                       <ul className="list-group list-group-flush text-center">
                         <li className="list-group-item">
-                          <b>{plano.recorrencia_mes} dias</b> de acesso
+                          <b>{totalDias(plano.recorrencia_mes, plano.recorrencia_dias)} dias</b> de acesso
                         </li>
                         <li className="list-group-item">
                           <b>Resultados das corridas</b>

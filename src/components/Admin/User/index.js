@@ -12,7 +12,7 @@ export default function EditarPerfil({ title }) {
       <div class="side-app">
         <div class="main-container container-fluid">
           <div class="row mt-5">
-            <div class="col-lg-12 col-md-6 col-sm-12">
+            <div class="col-lg-12 col-sm-12">
                 <div class="card overflow-hidden bg-info-transparent">
                     <div class="card-body">
                         <div class="row">

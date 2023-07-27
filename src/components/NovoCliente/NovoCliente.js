@@ -1,6 +1,6 @@
 import React, { useEffect, useState  } from "react";
 import parse from "html-react-parser";
-import { validateEmail, validateCpf, validateSenha } from './../../util/validacao'
+import { validateEmail, validateCpf, validateSenha, validateTelefone } from './../../util/validacao'
 import InputMask from "react-input-mask";
 import API from "./../../http/api";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +31,10 @@ export default function NovoCliente() {
 
     if (telefone === "") {
       erros.push("Preencha o campo Telefone");
+    }
+
+    if (!validateTelefone(telefone)) {
+      erros.push("Preencha o campo telefone");
     }
 
     if (!validateCpf(cpf)) {
@@ -203,7 +207,7 @@ export default function NovoCliente() {
                           Já possui conta?
                           <MyButton
                             text="Entrar"
-                            click={() => navigate("/")}
+                            click={() => window.location.href = '/'}
                             load={false}
                             className="text-primary ms-1"
                           />

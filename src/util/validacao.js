@@ -6,6 +6,18 @@ const validateEmail = (value) => {
         );
 }
 
+const validateTelefone = (value) => {
+	let numTel = value.replace(/[^0-9]/g, "");
+	if (numTel.length < 10)
+		return false
+	let numInvalid = ["00000000000", "11111111111", "22222222222", "33333333333", "44444444444", "55555555555", "66666666666", "77777777777", "88888888888",
+		"99999999999"]
+	if (numInvalid.includes(numTel)) {
+		return false;
+	}
+	return true;
+}
+
 const validateCpf = (cpf) => {
     cpf = cpf.replace(/[^\d]+/g,'');	
 	if(cpf === '') return false;	
@@ -50,4 +62,4 @@ const validateSenha = (value) => {
     return true
 }
 
-export { validateEmail, validateCpf, validateSenha};
+export { validateEmail, validateCpf, validateSenha, validateTelefone };

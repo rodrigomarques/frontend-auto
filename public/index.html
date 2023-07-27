@@ -5,10 +5,21 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AutoBet Virtual - Sistema de análises de automobilismo virtual na Bet365" />
+    <meta property="og:description"
+      content="AutoBet Virtual é um sistema completo de análise de mosaico, tabela de máximas, resultados 24h por dia e muito mais dados sobre o mercado de Automobilismo Virtual na Bet365." />
+    <meta property="og:url" content="https://autobetvirtual.com.br/" />
+    <meta property="og:site_name" content="AutoBet Virtual - Sistema de análises de automobilismo virtual na Bet365" />
+    <meta property="og:image" content="https://autobetvirtual.com.br/wp-content/uploads/2022/05/avatarAutoBet-1.png" />
+    <meta property="og:image:width" content="400" />
+    <meta property="og:image:height" content="400" />
+    <meta property="og:image:type" content="image/png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@autobetvirtual" />
+    <meta name="twitter:label1" content="Est. tempo de leitura" />
+    <meta name="twitter:data1" content="7 minutos" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -62,9 +73,65 @@
         top: 2px!important;
       }
 
+      .video-responsive {
+        overflow: hidden;
+        padding-bottom: 56.25%;
+        position: relative;
+        height: 0;
+      }
+
+      .video-responsive iframe {
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+      }
+
+      .tableCores table tbody th, .tableCores table tbody td{
+        padding: 0!important;
+        vertical-align: middle!important;
+      }
+      .tableCores span.vermelho {
+        background: red;
+        padding: 5px 10px;
+        display: block;
+        color: #fff;
+      }
+
+      .tableCores span.amarelo {
+        background: #EED639;
+        padding: 5px 10px;
+        display: block;
+        color: #000;
+      }
+
+      .tableCores span.roxo {
+        background: #6749D4;
+        padding: 5px 10px;
+        display: block;
+        color: #fff;
+      }
+
+      .tableCores .legenda {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 36px;
+      }
+
+      .tableCores .legenda li {
+        margin: 0 20px;
+      }
+
+      .tableCores .legenda li span {
+        padding: 5px 0;
+        margin-bottom: 7px;
+      }
+
       @media screen and (max-width: 1045px) and (min-width: 992px){
         .horizontal .side-menu>li>a {
-            padding: 16px 7px!important;
+            padding: 16px 3px!important;
+            font-size: 13px!important;
         }
       }
 
@@ -78,6 +145,9 @@
           padding-right: 0.75rem;    
           padding-left: 0.75rem;
         }
+        .horizontal .side-menu>li>a {
+            padding: 16px 5px!important;
+        }
       }
 
       @media (max-width: 991px){
@@ -89,7 +159,23 @@
         }
       }
 
+      @media (min-width: 560px) {
+        .tableCores .legenda li br {
+          display: none;
+        }
+      }
 
+		@media (max-width: 500px) {
+			.tableCores .legenda {
+				justify-content: space-between;
+			}
+
+			.tableCores .legenda li {
+				margin: 0 10px;
+				text-align: center;
+			}
+		}
+    
     </style>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
@@ -160,5 +246,15 @@
       <script src="%PUBLIC_URL%/assets/js/form-wizard.js"></script>
       <script src="%PUBLIC_URL%/assets/js/themeColors.js"></script>
       <script src="%PUBLIC_URL%/assets/js/custom.js"></script>
+
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-223737654-2"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-223737654-2');
+      </script>
   </body>
 </html>

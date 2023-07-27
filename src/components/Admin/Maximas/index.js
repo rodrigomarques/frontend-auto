@@ -3,7 +3,7 @@ import API from "./../../../http/api";
 import Header from "./header";
 import { percentStyle } from "./../../../util/funcao";
 
-export default function Maxima() {
+export default function Maxima(props) {
   const [maxima, setMaxima] = useState({});
   const [maximaForaPodio, setMaximaForaPodio] = useState({});
   const [corridasNoPodio, setCorridasNoPodio] = useState({});
@@ -59,7 +59,7 @@ export default function Maxima() {
     <>
       <div className="side-app">
         <div className="main-container container-fluid">
-          <Header link={1} />
+          <Header title={props.title} link={1} />
           <div className="row">
             <div className="col-xl-3 col-md-12 col-lg-6">
               <div className="card">

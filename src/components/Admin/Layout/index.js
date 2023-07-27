@@ -1,17 +1,51 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import MyContext from "./../../../context";
-import { useNavigate, Link  } from "react-router-dom";
+import Manutencao from "./../Manutencao";
+import { useNavigate, Link } from "react-router-dom";
 import API from "./../../../http/api";
 import jwt_decode from "jwt-decode";
+import { browserName, browserVersion } from "react-device-detect";
+import axios from "axios";
 
 export default function Layout({ children }) {
   let navigate = useNavigate();
-  const { token, setToken, user, setUser } = useContext(MyContext);
+  let { token, setToken, user, setUser } = useContext(MyContext);
+  const [manutencao, setManutencao] = useState(false);
+
   const sair = () => {
-    setToken(null)
+    setToken(null);
     localStorage.setItem("tk", null);
-    navigate("/");
-  }
+    localStorage.setItem("user", null);
+    //navigate("/");
+    window.location.href = "/";
+  };
+
+  const checkValidateUser = async () => {
+    let result = await axios.get("https://geolocation-db.com/json/");
+    let ip = result.data.IPv4;
+    API.post(`api/check-login`, {
+      ip: ip,
+      host: browserName + " " + browserVersion,
+    })
+      .then((res) => {
+        if (
+          res.data.entity.emmanutencao !== undefined &&
+          res.data.entity.emmanutencao === 1
+        ) {
+          setManutencao(true);
+        } else {
+          setManutencao(false);
+        }
+        return true;
+      })
+      .catch((e) => {
+        localStorage.setItem("tk", null);
+        localStorage.setItem("user", null);
+        window.location = "/";
+        return true;
+      });
+  };
+
   useEffect(() => {
     if (token == null || token === undefined || token === "" || user === null) {
       navigate("/");
@@ -19,13 +53,13 @@ export default function Layout({ children }) {
     }
 
     let limite = new Date(user.exp * 1000);
-    let hoje = new Date()
+    let hoje = new Date();
 
     if (limite < hoje) {
       API.post(`api/refresh`).then(async (res) => {
         if (res.data.access_token !== "") {
           let dados = jwt_decode(res.data.access_token);
-          setUser(dados)
+          setUser(dados);
           setToken(res.data.access_token);
 
           localStorage.setItem("tk", res.data.access_token);
@@ -33,37 +67,56 @@ export default function Layout({ children }) {
       });
     }
 
-    if (user.perfil === "CLI" && (user.plano_id === null || user.dtExpiracao == null)) {
+    if (
+      user.perfil === "CLI" &&
+      (user.plano_id === null || user.dtExpiracao == null)
+    ) {
       navigate("/admin/planos");
       return;
     }
 
-    let comandos = []
-    document.addEventListener("keydown", (e) => {
-      var key = e.keyCode;
-      let ultimoComando = comandos[0];
-      if (key === 116 || (ultimoComando === 91 && key === 82)) {
-        alert("Estamos atualizando o sistema");
-        e.preventDefault();
-      }
-      comandos[0] = key;
+    checkValidateUser();
+    const ajaxCheckValidateUserTime = setInterval(() => {
+      checkValidateUser();
+    }, 30000);
+
+    return (_) => {
+      clearTimeout(ajaxCheckValidateUserTime);
+    };
+  }, []);
+
+  const download = () => {
+    // using Java Script method to get PDF file
+    fetch("/assets/padroes_autobet.pdf").then((response) => {
+      response.blob().then((blob) => {
+        // Creating new object of PDF file
+        const fileURL = window.URL.createObjectURL(blob);
+        // Setting various property values
+        let alink = document.createElement("a");
+        alink.href = fileURL;
+        alink.download = "padroes_autobet.pdf";
+        alink.click();
+      });
     });
-  }, [])
+  };
 
   const validarMenu = () => {
-    if(user.perfil === "CLI" && (user.plano_id === null  || user.dtExpiracao == null )){
-      return false;  
+    if (
+      user.perfil === "CLI" &&
+      (user.plano_id === null || user.dtExpiracao == null)
+    ) {
+      return false;
     }
     return true;
-  }
+  };
 
   if (token == null || token === undefined || token === "") {
-    return <></>
+    return <></>;
   }
 
   return (
     <>
-      <body className="app ltr light-mode horizontal-hover horizontal">
+      <div className="app ltr light-mode horizontal-hover horizontal pb-5">
         <div className="page">
           <div className="page-main">
             <div className="header sticky hor-header">
@@ -74,7 +127,9 @@ export default function Layout({ children }) {
                     className="app-sidebar__toggle"
                     data-bs-toggle="sidebar"
                     href="javascript:void(0);"
-                  ></a>
+                  >
+                    {" "}
+                  </a>
                   <div className="responsive-logo">
                     <Link className="header-logo" to="/admin/">
                       <img
@@ -90,16 +145,16 @@ export default function Layout({ children }) {
                     </Link>
                   </div>
                   <Link className="col-md-3 logo-horizontal" to="/admin/">
-                      <img
-                        src="/assets/images/logo.png"
-                        className="header-brand-img desktop-logo"
-                        alt="logo"
-                      />
-                      <img
-                        src="/assets/images/logo-3.png"
-                        className="header-brand-img light-logo1"
-                        alt="logo"
-                      />
+                    <img
+                      src="/assets/images/logo.png"
+                      className="header-brand-img desktop-logo"
+                      alt="logo"
+                    />
+                    <img
+                      src="/assets/images/logo-3.png"
+                      className="header-brand-img light-logo1"
+                      alt="logo"
+                    />
                   </Link>
                   <div className="col-md-5 main-header-center ms-3 d-none d-lg-block text-center">
                     {user.perfil === "CLI" &&
@@ -185,14 +240,25 @@ export default function Layout({ children }) {
                                 <i className="dropdown-icon fe fe-user"></i>{" "}
                                 Editar Perfil
                               </Link>
-                              { /* 
-                              <a className="dropdown-item" href="faq.php">
-                                <i className="dropdown-icon fe fe-alert-triangle"></i>{" "}
-                                Precisa de Ajuda?
-                              </a>
-                              */ }
+                              <Link
+                                className="dropdown-item"
+                                to="/admin/tutoriais"
+                              >
+                                <i className="dropdown-icon fe fe-video"></i>{" "}
+                                Tutoriais
+                              </Link>
+                              {user.isBot !== undefined && user.isBot === 1 && (
+                                <a
+                                  style={{ cursor: "pointer" }}
+                                  className="dropdown-item"
+                                  onClick={() => download()}
+                                >
+                                  <i className="dropdown-icon fe fe-file-text"></i>{" "}
+                                  Download Padrões
+                                </a>
+                              )}
                               <a
-                                style={{ cursor: 'pointer'}}
+                                style={{ cursor: "pointer" }}
                                 className="dropdown-item"
                                 onClick={() => sair()}
                               >
@@ -314,9 +380,25 @@ export default function Layout({ children }) {
                           </Link>
                         </li>
                         <li className="slide">
-                          <Link className="side-menu__item" to="/admin/mosaico-valores">
+                          <Link
+                            className="side-menu__item"
+                            to="/admin/mosaico-cores"
+                          >
                             <i className="side-menu__icon fa fa-delicious"></i>
-                            <span className="side-menu__label">Mosaico Valores</span>
+                            <span className="side-menu__label">
+                              Mosaico Cores
+                            </span>
+                          </Link>
+                        </li>
+                        <li className="slide">
+                          <Link
+                            className="side-menu__item"
+                            to="/admin/mosaico-valores"
+                          >
+                            <i className="side-menu__icon fa fa-delicious"></i>
+                            <span className="side-menu__label">
+                              Mosaico Valores
+                            </span>
                           </Link>
                         </li>
                         <li className="slide">
@@ -325,17 +407,65 @@ export default function Layout({ children }) {
                             <span className="side-menu__label">Máximas</span>
                           </Link>
                         </li>
+                        <li className="slide d-lg-none d-block">
+                          <Link
+                            to="/admin/editar-perfil"
+                            className="side-menu__item"
+                          >
+                            <i className="side-menu__icon fe fe-user"></i>
+                            <span className="side-menu__label">
+                              Editar Perfil
+                            </span>
+                          </Link>
+                        </li>
+                        <li className="slide slide d-lg-none d-block">
+                          <Link
+                            className="side-menu__item"
+                            to="/admin/tutoriais"
+                          >
+                            <i className="side-menu__icon fe fe-video"></i>
+                            <span className="side-menu__label">Tutoriais</span>
+                          </Link>
+                        </li>
+                        {user.isBot !== undefined && user.isBot === 1 && (
+                          <li className="slide slide d-lg-none d-block">
+                            <a
+                              style={{ cursor: "pointer" }}
+                              onClick={() => download()}
+                              className="side-menu__item"
+                            >
+                              <i className="side-menu__icon fe fe-file-text"></i>
+                              <span className="side-menu__label">
+                                Download Padrões
+                              </span>
+                            </a>
+                          </li>
+                        )}
+                        <li className="slide slide d-lg-none d-block">
+                          <a
+                            style={{ cursor: "pointer" }}
+                            onClick={() => sair()}
+                            className="side-menu__item"
+                          >
+                            <i className="side-menu__icon fe fe-alert-circle"></i>
+                            <span className="side-menu__label">Sair</span>
+                          </a>
+                        </li>
                       </>
                     )}
                   </ul>
                 </div>
               </aside>
             </div>
-
+            {manutencao && (
+              <div className="main-content mt-0">
+                <Manutencao title="BET em Manutenção" />
+              </div>
+            )}
             <div className="main-content mt-0">{children}</div>
           </div>
         </div>
-      </body>
+      </div>
     </>
   );
 }

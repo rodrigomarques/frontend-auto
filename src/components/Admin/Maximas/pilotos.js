@@ -4,7 +4,7 @@ import { formatOdd } from "./../../../util/funcao";
 import Header from "./header";
 import parse from "html-react-parser";
 
-export default function Pilotos() {
+export default function Pilotos(props) {
   const [resultadoPilotos, setResultadoPilotos] = useState([]);
   const [allPilotos, setAllPilotos] = useState([]);
   const [nome, setNome] = useState('');
@@ -37,14 +37,17 @@ export default function Pilotos() {
     <>
       <div class="side-app">
         <div class="main-container container-fluid">
-          <Header link={2} />
+          <Header title={props.title} link={2} />
           <div class="row row-sm">
             <div class="col-lg-12">
               <div class="card custom-card">
                 <div class="card-body">
                   <div class="row justify-content-end mb-5">
                     <div class="col-5">
-                      <div class="main-header-center ms-8 d-none d-lg-flex " style={{ justifyContent: "end"}}>
+                      <div
+                        class="main-header-center ms-8 d-none d-lg-flex "
+                        style={{ justifyContent: "end" }}
+                      >
                         <input
                           class="form-control"
                           placeholder="Digite o nome do piloto..."

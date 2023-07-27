@@ -10,7 +10,7 @@ export default function MosaicoOddValor({ title }) {
 
   const [dadosCorridas, setDadosCorridas] = useState([]);
   const [header, setHeader] = useState([]);
-  const [showNumberOdd, setShowNumberOdd] = useState(2);
+  const [showNumberOdd, setShowNumberOdd] = useState(1);
   const [totalPagoHora, setTotalPagoHora] = useState(0);
 
   const addTotalPago = (horaAtual) => {
@@ -35,7 +35,7 @@ export default function MosaicoOddValor({ title }) {
     total += parseFloat(getValor(dadosCorridas[`${horaAtual}:51`]));
     total += parseFloat(getValor(dadosCorridas[`${horaAtual}:54`]));
     total += parseFloat(getValor(dadosCorridas[`${horaAtual}:57`]));
-    return "R$ " + fn(total);
+    return fn(total);
   }
 
   const getValor = (corrida) => {
@@ -96,7 +96,7 @@ export default function MosaicoOddValor({ title }) {
       <div className="side-app">
         <div className="main-container container-fluid">
           <div className="row mt-5">
-            <div className="col-lg-12 col-md-6 col-sm-12">
+            <div className="col-lg-12 col-sm-12">
               <div className="card overflow-hidden bg-info-transparent">
                 <div className="card-body">
                   <div className="row">
@@ -135,11 +135,11 @@ export default function MosaicoOddValor({ title }) {
                       </a>
                     </div>
                   </div>
-                  {Object.entries(dadosCorridas).forEach(([chave, valor]) => {
+                  {Object.entries(dadosCorridas).forEach(([chave, valor]) => (
                     <tr>
                       <th>{chave}</th>
-                    </tr>;
-                  })}
+                    </tr>
+                  ))}
                   <div className="table-responsive">
                     <table className="table border text-nowrap text-md-nowrap table-bordered mg-b-0 table-odd">
                       <thead>

@@ -41,7 +41,7 @@ export default function ProximasCorridas({ title }) {
       <div className="side-app" style={{ marginBottom: 40 }}>
         <div className="main-container container-fluid">
           <div className="row mt-5">
-            <div className="col-lg-12 col-md-6 col-sm-12">
+            <div className="col-lg-12 col-sm-12">
               <div className="card overflow-hidden bg-info-transparent">
                 <div className="card-body">
                   <div className="row">
