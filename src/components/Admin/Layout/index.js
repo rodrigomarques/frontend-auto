@@ -247,7 +247,7 @@ export default function Layout({ children }) {
                                 <i className="dropdown-icon fe fe-video"></i>{" "}
                                 Tutoriais
                               </Link>
-                              {user.isBot !== undefined && user.isBot === 1 && (
+                              {user.plano_id !== undefined && (
                                 <a
                                   style={{ cursor: "pointer" }}
                                   className="dropdown-item"
@@ -331,7 +331,7 @@ export default function Layout({ children }) {
                           >
                             <i className="side-menu__icon fa fa-road"></i>
                             <span className="side-menu__label">
-                              Próximas Corridas
+                              Corridas
                             </span>
                           </Link>
                         </li>
@@ -427,7 +427,7 @@ export default function Layout({ children }) {
                             <span className="side-menu__label">Tutoriais</span>
                           </Link>
                         </li>
-                        {user.isBot !== undefined && user.isBot === 1 && (
+                        {user.plano_id !== undefined && (
                           <li className="slide slide d-lg-none d-block">
                             <a
                               style={{ cursor: "pointer" }}
