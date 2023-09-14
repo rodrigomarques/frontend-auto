@@ -5,11 +5,11 @@ import parse from 'html-react-parser';
 import { formatOdd, percentStyle, formatHour, formatDate, nVezes } from "./../../../util/funcao";
 import useDocumentTitle from './../Title/useDocumentTitle'
 import MyContext from "./../../../context";
-import MyButton from "./../../MyButton";
 
 export default function Dashboard({title}) {
 
-  const { user, setUser } = useContext(MyContext);
+  //const { user, setUser } = useContext(MyContext);
+  const { user } = useContext(MyContext);
   useDocumentTitle(title);
 
   const [dadosProximaCorrida, setDadosProximaCorrida] = useState({})

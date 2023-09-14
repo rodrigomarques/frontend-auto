@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "./../../../http/api";
 import parse from 'html-react-parser';
-import { formatMosaico } from "./../../../util/funcao";
+import { formatMosaicoNovo } from "./../../../util/funcao";
 import useDocumentTitle from "./../Title/useDocumentTitle";
 export default function Mosaicos({ title:tituloHeader, show }) {
   useDocumentTitle(tituloHeader);
@@ -11,6 +11,10 @@ export default function Mosaicos({ title:tituloHeader, show }) {
   const [header, setHeader] = useState([]);
   const [showNumberOdd, setShowNumberOdd] = useState("all");
   const [horaAtual, setHoraAtual] = useState(0);
+
+  const [pos1, setPos1] = useState('');
+  const [pos2, setPos2] = useState('');
+  const [pos3, setPos3] = useState('');
   
   const ultimasCorridas = () => {
     try {
@@ -57,6 +61,39 @@ export default function Mosaicos({ title:tituloHeader, show }) {
 
     return (_) => clearTimeout(ajaxTime);
   }, []);
+
+  const selecionarCorredor = (pos) => {
+    let p1 = pos
+    let alterou = false
+
+    if(pos1 == '' && p1 != pos1){
+      setPos1(p1)
+      alterou = true
+    }else if(pos1 != '' && p1 == pos1){
+      setPos1('')
+      alterou = true
+    }
+
+    if(!alterou){
+      if(pos2 == '' && p1 != pos2){
+        setPos2(p1)
+        alterou = true
+      }else if(pos2 != '' && p1 == pos2){
+        setPos2('')
+        alterou = true
+      }
+    }
+
+    if(!alterou){
+      if(pos3 == '' && p1 != pos3){
+        setPos3(p1)
+        alterou = true
+      }else if(pos3 != '' && p1 == pos3){
+        setPos3('')
+        alterou = true
+      }
+    }
+  }
 
   return (
     <>
@@ -116,202 +153,322 @@ export default function Mosaicos({ title:tituloHeader, show }) {
                             <th>{item}</th>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:00`],
-                                    showNumberOdd
-                                  )
-                                )}
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:00`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:00`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:00`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:00`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:00`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:00`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:03`],
-                                    showNumberOdd
-                                  )
-                                )}
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:03`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:03`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:03`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:03`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:03`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:03`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:06`],
-                                    showNumberOdd
-                                  )
-                                )}
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:06`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:06`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:06`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:06`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:06`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:06`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:09`],
-                                    showNumberOdd
-                                  )
-                                )}
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:09`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:09`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:09`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:09`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:09`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:09`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:12`],
-                                    showNumberOdd
-                                  )
-                                )}
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:12`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:12`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:12`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:12`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:12`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:12`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:15`],
-                                    showNumberOdd
-                                  )
-                                )}
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:15`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:15`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:15`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:15`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:15`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:15`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:18`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:18`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:18`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:18`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:18`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:18`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:18`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:21`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:21`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:21`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:21`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:21`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:21`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:21`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:24`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:24`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:24`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:24`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:24`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:24`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:24`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:27`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:27`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:27`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:27`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:27`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:27`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:27`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:30`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:30`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:30`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:30`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:30`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:30`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:30`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:33`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:33`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:33`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:33`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:33`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:33`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:33`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:36`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:36`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:36`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:36`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:36`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:36`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:36`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:39`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:39`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:39`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:39`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:39`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:39`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:39`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:42`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:42`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:42`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:42`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:42`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:42`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:42`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:45`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:45`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:45`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:45`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:45`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:45`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:45`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:48`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:48`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:48`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:48`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:48`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:48`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:48`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:51`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:51`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:51`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:51`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:51`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:51`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:51`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:54`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:54`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:54`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:54`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:54`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:54`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:54`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                             <td>
                               <div>
-                                {parse(
-                                  formatMosaico(
-                                    dadosCorridas[`${item}:57`],
-                                    showNumberOdd
-                                  )
-                                )}
+                              <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:57`]; 
+                                  selecionarCorredor(pos[0]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:57`],0,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:57`]; 
+                                  selecionarCorredor(pos[1]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:57`],1,pos1,pos2,pos3,show))}</a>
+                                <a onClick={ () => {  
+                                  let pos = dadosCorridas[`${item}:57`]; 
+                                  selecionarCorredor(pos[2]) }}>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:57`],2,pos1,pos2,pos3,show))}</a>
                               </div>
                             </td>
                           </tr>

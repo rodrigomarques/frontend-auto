@@ -48,23 +48,83 @@ const formatMosaicoOddValores = (oddPaga, show = 1) => {
 };
 
 
-const formatMosaico = (posicoes, show = "all") => {
+const formatMosaico = (posicoes, show = "all", pos1 = '', pos2 = '', pos3 = '') => {
   if (posicoes === undefined) return "";
   if (typeof posicoes !== "object") return posicoes;
   let formatString = "";
     posicoes.map((elem, index) => {
+        let style = ''
+        if(pos1 === elem){
+          style = 'border: 5px #F00 solid;'
+        }
+        if(pos2 === elem){
+          style = 'border: 5px #0F0 solid;'
+        }
+        if(pos3 === elem){
+          style = 'border: 5px #000 solid;'
+        }
+        
         if (show !== "all") {
             if (show > index) {
-                formatString += "<img src=" + getImageRunner(elem) + " style='max-width: none;'/>";
+                formatString += "<img src=" + getImageRunner(elem) + " style='max-width: none;"+style+"'/>";
                 formatString += " ";
             }
         } else {
-            formatString +=
-                "<img src=" + getImageRunner(elem) + " style='max-width: none;'/>";
+            formatString += "<img src=" + getImageRunner(elem) + " class='elem" +elem+ "' style='max-width: none;"+style+"'/>";
             formatString += " ";
       }
       return formatString;
   });
+  return formatString;
+};
+
+const formatMosaicoNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '', show = 'all') => {
+  if (posicoes === undefined) return "";
+  if (typeof posicoes !== "object") return posicoes;
+  let elem = posicoes[index]
+  let style = ''
+    if(pos1 === elem){
+      style = 'border: 5px #F00 solid;'
+    }
+    if(pos2 === elem){
+      style = 'border: 5px #0F0 solid;'
+    }
+    if(pos3 === elem){
+      style = 'border: 5px #000 solid;'
+    }
+    
+    if(show !== 'all' && show < index + 1){
+      return '';
+    }
+  let formatString = "";
+  formatString += "<img src=" + getImageRunner(elem) + " style='max-width: none;"+style+"'/>";
+  formatString += " ";
+  return formatString;
+};
+
+const formatMosaicoOddNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '', show = 'all') => {
+
+  if (posicoes === undefined) return "";
+  if (typeof posicoes !== "object") return posicoes;
+  let elem = posicoes[index]
+  
+  let style = ''
+    if(pos1 === elem){
+      style = 'border: 5px #F00 solid;'
+    }
+    if(pos2 === elem){
+      style = 'border: 5px #0F0 solid;'
+    }
+    if(pos3 === elem){
+      style = 'border: 5px #000 solid;'
+    }
+    
+    if(show !== 'all' && show < index + 1){
+      return '';
+    }
+  let formatString = "";
+  formatString += "<span style='max-width: none;"+style+"'>" + formatOdd(elem) + "</span>" 
+  formatString += " ";
   return formatString;
 };
 
@@ -205,5 +265,7 @@ export {
   formatHour,
   nVezes,
   totalDias,
-  formatMosaicoCores
+  formatMosaicoCores,
+  formatMosaicoNovo,
+  formatMosaicoOddNovo
 };

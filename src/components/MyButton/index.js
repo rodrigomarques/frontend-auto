@@ -13,9 +13,9 @@ export default function MyButton(props) {
   }
   return (
     <>
-      <a href="#" type="button" onClick={() => props.click()} className={props.className} >
+      <button type="button" onClick={() => props.click()} className={props.className} >
         {props.text}
-      </a>
+      </button>
     </>
   );
 }
