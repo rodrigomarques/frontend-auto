@@ -78,19 +78,24 @@ const formatMosaico = (posicoes, show = "all", pos1 = '', pos2 = '', pos3 = '') 
   return formatString;
 };
 
-const formatMosaicoNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '', show = 'all') => {
+const formatMosaicoNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '', show = 'all',marcados = []) => {
   if (posicoes === undefined) return "";
   if (typeof posicoes !== "object") return posicoes;
   let elem = posicoes[index]
   let style = ''
-    if(pos1 === elem){
-      style = 'border: 5px #F00 solid;'
+  
+    if(marcados.includes(elem)){
+      style = 'border: 3px solid #fff;'
     }
+    if(pos1 === elem){
+      style = 'border: 3px solid #fff;'
+    }
+    
     if(pos2 === elem){
-      style = 'border: 5px #0F0 solid;'
+      style = 'border: 3px solid #fff;'
     }
     if(pos3 === elem){
-      style = 'border: 5px #000 solid;'
+      style = 'border: 3px solid #fff;'
     }
     
     if(show !== 'all' && show < index + 1){
@@ -102,21 +107,24 @@ const formatMosaicoNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '',
   return formatString;
 };
 
-const formatMosaicoOddNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '', show = 'all') => {
+const formatMosaicoOddNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '', show = 'all',marcados = []) => {
 
   if (posicoes === undefined) return "";
   if (typeof posicoes !== "object") return posicoes;
   let elem = posicoes[index]
   
   let style = ''
+    if(marcados.includes(elem)){
+      style = 'border: 3px solid #fff;'
+    }
     if(pos1 === elem){
-      style = 'border: 5px #F00 solid;'
+      style = 'border: 3px solid #fff;'
     }
     if(pos2 === elem){
-      style = 'border: 5px #0F0 solid;'
+      style = 'border: 3px solid #fff;'
     }
     if(pos3 === elem){
-      style = 'border: 5px #000 solid;'
+      style = 'border: 3px solid #fff;'
     }
     
     if(show !== 'all' && show < index + 1){

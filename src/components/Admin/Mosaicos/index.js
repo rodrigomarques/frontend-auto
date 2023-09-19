@@ -15,6 +15,7 @@ export default function Mosaicos({ title:tituloHeader, show }) {
   const [pos1, setPos1] = useState('');
   const [pos2, setPos2] = useState('');
   const [pos3, setPos3] = useState('');
+  const [marcados, setMarcados] = useState([]);
   
   const ultimasCorridas = () => {
     try {
@@ -66,20 +67,26 @@ export default function Mosaicos({ title:tituloHeader, show }) {
     let p1 = pos
     let alterou = false
 
+    let marc = marcados
+
     if(pos1 == '' && p1 != pos1){
       setPos1(p1)
+      marc[0] = p1
       alterou = true
     }else if(pos1 != '' && p1 == pos1){
       setPos1('')
+      marc[0] = ''
       alterou = true
     }
 
     if(!alterou){
       if(pos2 == '' && p1 != pos2){
         setPos2(p1)
+        marc[1] = p1
         alterou = true
       }else if(pos2 != '' && p1 == pos2){
         setPos2('')
+        marc[1] = ''
         alterou = true
       }
     }
@@ -87,12 +94,16 @@ export default function Mosaicos({ title:tituloHeader, show }) {
     if(!alterou){
       if(pos3 == '' && p1 != pos3){
         setPos3(p1)
+        marc[2] = p1
         alterou = true
       }else if(pos3 != '' && p1 == pos3){
         setPos3('')
+        marc[2] = ''
         alterou = true
       }
     }
+    setMarcados(marc)
+    
   }
 
   return (
@@ -151,324 +162,404 @@ export default function Mosaicos({ title:tituloHeader, show }) {
                         {header.map((item) => (
                           <tr>
                             <th>{item}</th>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:00`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:00`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:00`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:00`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:00`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:00`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:00`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:00`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:00`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:00`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:00`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:00`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:00`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:03`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:03`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:03`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:03`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:03`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:03`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:03`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:03`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:03`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:03`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:03`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:03`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:03`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:06`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:06`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:06`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:06`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:06`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:06`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:06`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:06`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:06`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:06`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:06`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:06`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:06`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:09`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:09`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:09`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:09`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:09`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:09`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:09`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:09`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:09`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:09`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:09`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:09`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:09`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:12`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:12`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:12`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:12`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:12`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:12`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:12`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:12`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:12`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:12`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:12`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:12`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:12`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:15`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:15`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:15`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:15`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:15`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:15`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:15`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:15`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:15`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:15`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:15`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:15`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:15`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:18`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:18`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:18`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:18`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:18`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:18`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:18`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:18`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:18`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:18`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:18`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:18`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:18`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:21`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:21`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:21`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:21`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:21`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:21`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:21`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:21`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:21`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:21`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:21`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:21`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:21`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:24`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:24`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:24`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:24`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:24`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:24`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:24`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:24`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:24`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:24`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:24`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:24`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:24`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:27`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:27`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:27`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:27`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:27`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:27`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:27`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:27`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:27`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:27`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:27`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:27`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:27`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:30`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:30`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:30`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:30`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:30`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:30`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:30`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:30`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:30`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:30`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:30`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:30`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:30`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:33`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:33`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:33`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:33`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:33`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:33`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:33`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:33`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:33`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:33`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:33`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:33`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:33`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:36`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:36`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:36`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:36`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:36`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:36`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:36`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:36`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:36`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:36`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:36`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:36`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:36`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:39`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:39`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:39`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:39`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:39`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:39`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:39`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:39`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:39`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:39`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:39`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:39`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:39`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:42`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:42`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:42`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:42`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:42`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:42`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:42`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:42`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:42`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:42`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:42`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:42`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:42`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:45`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:45`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:45`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:45`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:45`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:45`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:45`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:45`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:45`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:45`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:45`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:45`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:45`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:48`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:48`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:48`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:48`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:48`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:48`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:48`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:48`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:48`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:48`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:48`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:48`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:48`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:51`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:51`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:51`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:51`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:51`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:51`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:51`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:51`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:51`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:51`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:51`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:51`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:51`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:54`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:54`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:54`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:54`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:54`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:54`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:54`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:54`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:54`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:54`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:54`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:54`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:54`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
-                            <td>
+                            <td className={ (
+                              dadosCorridas[`${item}:57`] != undefined && (
+                              marcados.includes(dadosCorridas[`${item}:57`][0]) || 
+                              (marcados.includes(dadosCorridas[`${item}:57`][1]) && (showNumberOdd == 2 || showNumberOdd == 'all')) || 
+                              (marcados.includes(dadosCorridas[`${item}:57`][2]) && showNumberOdd == 'all'))) ? " atv ":" " }>
                               <div>
                               <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:57`]; 
                                   selecionarCorredor(pos[0]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:57`],0,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:57`],0,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:57`]; 
                                   selecionarCorredor(pos[1]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:57`],1,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:57`],1,pos1,pos2,pos3,show, marcados))}</a>
                                 <a onClick={ () => {  
                                   let pos = dadosCorridas[`${item}:57`]; 
                                   selecionarCorredor(pos[2]) }}>
-                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:57`],2,pos1,pos2,pos3,show))}</a>
+                                    {parse(formatMosaicoNovo(dadosCorridas[`${item}:57`],2,pos1,pos2,pos3,show, marcados))}</a>
                               </div>
                             </td>
                           </tr>
