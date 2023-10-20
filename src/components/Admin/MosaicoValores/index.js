@@ -11,7 +11,7 @@ export default function MosaicoOddValor({ title }) {
   const [dadosCorridas, setDadosCorridas] = useState([]);
   const [header, setHeader] = useState([]);
   const [showNumberOdd, setShowNumberOdd] = useState(1);
-  const [totalPagoHora, setTotalPagoHora] = useState(0);
+  //const [totalPagoHora, setTotalPagoHora] = useState(0);
 
   const addTotalPago = (horaAtual) => {
     let total = 0
@@ -100,7 +100,7 @@ export default function MosaicoOddValor({ title }) {
               <div className="card overflow-hidden bg-info-transparent">
                 <div className="card-body">
                   <div className="row">
-                    <h1 className="page-title text-center">MOSAICO DE ODD</h1>
+                    <h1 className="page-title text-center">MOSAICO DE VALORES</h1>
                   </div>
                 </div>
               </div>

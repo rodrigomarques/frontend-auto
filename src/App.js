@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./components/Login/Login";
 import EsqueceuSenha from "./components/Login/EsqueceuSenha";
 import NovoCliente from "./components/NovoCliente/NovoCliente";
+import NovoClienteCurso from "./components/NovoClienteCurso/NovoCliente";
 import Admin from "./components/Admin/Admin";
 import MyContext from "./context";
 
@@ -21,6 +22,7 @@ function App() {
         <Routes>
           <Route exact path="/" element={<Login />} />
           <Route exact path="/novo-cliente" element={<NovoCliente />} />
+          <Route exact path="/novo-cliente-curso" element={<NovoClienteCurso />} />
           <Route exact path="/esqueceu-senha" element={<EsqueceuSenha />} />
           <Route path="*" element={<Admin />} />
         </Routes>

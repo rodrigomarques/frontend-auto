@@ -42,7 +42,7 @@ export default function Login() {
 
           localStorage.setItem("tk", res.data.access_token);
           localStorage.setItem("user", JSON.stringify(dados));
-
+          
           if (
             dados.perfil === "CLI" &&
             (dados.plano_id === null || dados.dtExpiracao == null)
@@ -59,12 +59,20 @@ export default function Login() {
           }
         } else {
           setLoad(false);
+          API.post(`save-log`, {
+            email: email, 
+            error : ''
+          })
           alert("Dados inválidos");
         }
         return false;
       })
       .catch((e) => {
         alert("Dados inválidos");
+        API.post(`save-log`, {
+          email: email,
+          error : e.message
+        })
         setLoad(false);
         return false;
       });
