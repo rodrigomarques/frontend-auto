@@ -84,6 +84,7 @@ const formatMosaicoNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '',
   let elem = posicoes[index]
   let style = ''
   
+  if(show === 'all' || show === 1){
     if(marcados.includes(elem)){
       style = 'border: 3px solid #fff;'
     }
@@ -97,16 +98,76 @@ const formatMosaicoNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '',
     if(pos3 === elem){
       style = 'border: 3px solid #fff;'
     }
-    
-    if(show !== 'all' && show < index + 1){
-      return '';
+  }else{
+    if(marcados.length === 1 && posicoes[0] === marcados[0]){
+      style = 'border: 3px solid #fff;'
+    }else if(marcados.length > 1 && 
+      ( (posicoes[0] === marcados[0] && posicoes[1] === marcados[1]) || 
+        (posicoes[1] === marcados[0] && posicoes[0] === marcados[1])
+      )){
+        style = 'border: 3px solid #fff;'
     }
+
+    if(marcados.length === 3 && posicoes[0] === marcados[2]){
+      style = 'border: 3px solid #fff;'
+    }else if(marcados.length > 3 && 
+      ( (posicoes[0] === marcados[2] && posicoes[1] === marcados[3]) || 
+        (posicoes[1] === marcados[2] && posicoes[0] === marcados[3])
+      )){
+        style = 'border: 3px solid #fff;'
+    }
+  }
+
+  if(show !== 'all' && show < index + 1){
+    return '';
+  }
+  return formatImage(elem, style)
+
+};
+
+const showAtivo = (posicoes, show = 'all',marcados = []) => {
+  if (posicoes === undefined) return false;
+  if (typeof posicoes !== "object") return false;
+  let elem1 = posicoes[0]
+  let elem2 = posicoes[1]
+  let elem3 = posicoes[2]
+  if(marcados.length === 0) return false
+  
+  if(show === 1 && marcados.includes(elem1)){
+    return true
+  }else if(show === 'all'){
+    return marcados.includes(elem1) || marcados.includes(elem2) || marcados.includes(elem3)
+  }else if(show === 2){
+    let totalMarcados = marcados.filter(val => val !== "").length
+    let nvMarcados = marcados.filter(val => val !== "")
+    if(totalMarcados === 1 && elem1 === nvMarcados[0]){
+      return true
+    }else if(totalMarcados > 1 && 
+      ( (elem1 === marcados[0] && elem2 === nvMarcados[1]) || 
+        (elem2 === marcados[0] && elem1 === nvMarcados[1])
+      )){
+        return true
+    }
+    if(totalMarcados === 3 && elem1 === nvMarcados[2]){
+      return true
+    }else if(totalMarcados > 3 && 
+      ( (elem1 === nvMarcados[2] && elem2 === nvMarcados[3]) || 
+        (elem2 === nvMarcados[2] && elem1 === nvMarcados[3])
+      )){
+        return true
+    }
+  }
+
+  return false
+
+};
+
+const formatImage = (elem, style) => {
   let formatString = "";
   formatString += "<img src=" + getImageRunner(elem) + " style='max-width: none;"+style+"'/>";
   formatString += " ";
   return formatString;
-};
-
+}
 const formatMosaicoOddNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '', show = 'all',marcados = []) => {
 
   if (posicoes === undefined) return "";
@@ -145,19 +206,27 @@ const classPilotoCor = (posicao) => {
     return "roxo";
   }
 }
-const formatMosaicoCores = (posicoes, show = "all") => {
+const formatMosaicoCores = (posicoes, show = "all", fn) => {
   if (posicoes === undefined) return "";
   if (typeof posicoes !== "object") return posicoes;
   let formatString = "";
     posicoes.map((elem, index) => {
         if (show !== "all") {
             if (show > index) {
+              if(fn !== undefined){
+                formatString += "<span class='" +fn(elem)+ "'>" +elem+ "</span>";
+              }else{
                 formatString += "<span class='" +classPilotoCor(elem)+ "'>" +elem+ "</span>";
-                formatString += " ";
+              }
+              formatString += " ";
             }
         } else {
+          if(fn !== undefined){
+            formatString += "<span class='" +fn(elem)+ "'>" +elem+ "</span>";
+          }else{
             formatString += "<span class='" +classPilotoCor(elem)+ "'>" +elem+ "</span>";
-            formatString += " ";
+          }
+          formatString += " ";
       }
       return formatString;
   });
@@ -275,5 +344,7 @@ export {
   totalDias,
   formatMosaicoCores,
   formatMosaicoNovo,
-  formatMosaicoOddNovo
+  formatMosaicoOddNovo,
+  formatImage,
+  showAtivo
 };

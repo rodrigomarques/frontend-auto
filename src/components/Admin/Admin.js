@@ -7,6 +7,7 @@ import Layout from "./Layout";
 import MosaicoOdd from "./MosaicoOdd";
 import MosaicoValores from "./MosaicoValores";
 import MosaicoCores from "./MosaicoCores";
+import MosaicoParImpar from "./MosaicoParImpar";
 import Mosaicos from "./Mosaicos";
 import Checkout from "./Planos/checkout";
 import ProximasCorridas from "./ProximasCorridas";
@@ -43,6 +44,7 @@ function Admin() {
         <Route exact path="/admin/mosaico-tri" element={<Mosaicos key={3} show={"all"} title={"Mosaico - Sistema Autobet"} />} />
         <Route exact path="/admin/mosaico-odd" element={<MosaicoOdd title={"Mosaico ODDs - Sistema Autobet"} />} />
         <Route exact path="/admin/mosaico-cores" element={<MosaicoCores title={"Mosaico de Cores - Sistema Autobet"} />} />
+        <Route exact path="/admin/mosaico-parimpar" element={<MosaicoParImpar title={"Mosaico de Par/Ímpar - Sistema Autobet"} />} />
         <Route exact path="/admin/mosaico-valores" element={<MosaicoValores title={"Mosaico de Valores - Sistema Autobet"} />} />
         <Route exact path="/admin/maximas" element={<Maximas title={"Máxima - Sistema Autobet"} />} />
         <Route exact path="/admin/pilotos" element={<Pilotos title={"Máxima por Pilotos - Sistema Autobet"} />} />

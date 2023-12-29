@@ -21,8 +21,13 @@ export default function Layout({ children }) {
   };
 
   const checkValidateUser = async () => {
-    let result = await axios.get("https://geolocation-db.com/json/");
-    let ip = result.data.IPv4;
+    let ip = '';
+    try{
+      let result = await axios.get("https://geolocation-db.com/json/");
+      ip = result.data.IPv4
+    }catch(e){
+
+    }
     API.post(`api/check-login`, {
       ip: ip,
       host: browserName + " " + browserVersion,
@@ -36,6 +41,10 @@ export default function Layout({ children }) {
         } else {
           setManutencao(false);
         }
+        if(res.data.token !== undefined && res.data.token != ""){
+          localStorage.setItem("tk", res.data.token);
+        }
+        
         return true;
       })
       .catch((e) => {
