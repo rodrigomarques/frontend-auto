@@ -1,5 +1,7 @@
-import React, { useContext, useState } from "react";
-import MyContext from "./../../context";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+//import React, { useContext, useState } from "react";
+import React, { useState } from "react";
+//import MyContext from "./../../context";
 import API from "./../../http/api";
 import { useNavigate, Link } from "react-router-dom";
 import parse from "html-react-parser";
@@ -7,7 +9,7 @@ import parse from "html-react-parser";
 export default function EsqueceuSenha() {
 
   let navigate = useNavigate();
-  const { token, setToken, user, setUser } = useContext(MyContext);
+  //const { token, setToken, user, setUser } = useContext(MyContext);
   const [email, setEmail] = useState('')
   const [erroMsg, setErroMsg] = useState();
   const [sucessoMsg, setSucessoMsg] = useState();

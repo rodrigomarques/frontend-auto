@@ -78,12 +78,14 @@ const formatMosaico = (posicoes, show = "all", pos1 = '', pos2 = '', pos3 = '') 
   return formatString;
 };
 
-const formatMosaicoNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '', show = 'all',marcados = []) => {
+const formatMosaicoNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '', show = 'all', elemMarcados = []) => {
   if (posicoes === undefined) return "";
   if (typeof posicoes !== "object") return posicoes;
   let elem = posicoes[index]
   let style = ''
   
+  //let marcados = elemMarcados.filter(val => val !== "")
+  let marcados = elemMarcados
   if(show === 'all' || show === 1){
     if(marcados.includes(elem)){
       style = 'border: 3px solid #fff;'
@@ -99,7 +101,7 @@ const formatMosaicoNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '',
       style = 'border: 3px solid #fff;'
     }
   }else{
-    if(marcados.length === 1 && posicoes[0] === marcados[0]){
+    if(marcados.length === 1 && posicoes[0] === marcados[0] && index === 0){
       style = 'border: 3px solid #fff;'
     }else if(marcados.length > 1 && 
       ( (posicoes[0] === marcados[0] && posicoes[1] === marcados[1]) || 
@@ -108,11 +110,20 @@ const formatMosaicoNovo = (posicoes, index = 0, pos1 = '', pos2 = '', pos3 = '',
         style = 'border: 3px solid #fff;'
     }
 
-    if(marcados.length === 3 && posicoes[0] === marcados[2]){
+    if(marcados.length === 3 && posicoes[0] === marcados[2] && index === 0){
       style = 'border: 3px solid #fff;'
     }else if(marcados.length > 3 && 
       ( (posicoes[0] === marcados[2] && posicoes[1] === marcados[3]) || 
         (posicoes[1] === marcados[2] && posicoes[0] === marcados[3])
+      )){
+        style = 'border: 3px solid #fff;'
+    }
+
+    if(marcados.length === 5 && posicoes[0] === marcados[4] && index === 0){
+      style = 'border: 3px solid #fff;'
+    }else if(marcados.length > 5 && 
+      ( (posicoes[0] === marcados[4] && posicoes[1] === marcados[5]) || 
+        (posicoes[1] === marcados[4] && posicoes[0] === marcados[5])
       )){
         style = 'border: 3px solid #fff;'
     }
@@ -132,19 +143,55 @@ const showAtivo = (posicoes, show = 'all',marcados = []) => {
   let elem2 = posicoes[1]
   let elem3 = posicoes[2]
   if(marcados.length === 0) return false
-  
+
   if(show === 1 && marcados.includes(elem1)){
     return true
   }else if(show === 'all'){
-    return marcados.includes(elem1) || marcados.includes(elem2) || marcados.includes(elem3)
+    let totalMarcados = marcados.filter(val => val !== "").length
+    let nvMarcados = marcados.filter(val => val !== "")
+
+    if(totalMarcados === 1 && elem1 === nvMarcados[0]){
+      return true
+    }else if(totalMarcados === 2 && 
+      ( (elem1 === nvMarcados[0] && elem2 === nvMarcados[1]) || 
+        (elem2 === nvMarcados[0] && elem1 === nvMarcados[1])
+      )){
+        return true
+    }else if(totalMarcados > 2){
+      let primeiroTricast = nvMarcados.slice(0, 3);
+      if(primeiroTricast.includes(elem1) && primeiroTricast.includes(elem2) && primeiroTricast.includes(elem3)){
+        return true
+      }
+    }
+    
+    if(totalMarcados === 4 && elem1 === nvMarcados[3]){
+      return true
+    }else if(totalMarcados === 5 && 
+      ( (elem1 === nvMarcados[3] && elem2 === nvMarcados[4]) || 
+        (elem2 === nvMarcados[3] && elem1 === nvMarcados[4])
+      )){
+        return true
+    }else if(totalMarcados > 5){
+      let segundoTricast = nvMarcados.slice(3, 6);
+      return segundoTricast.includes(elem1) && segundoTricast.includes(elem2) && segundoTricast.includes(elem3)
+    }
+
+    return false
+
+    if(totalMarcados === 3){
+      return nvMarcados.includes(elem1) && nvMarcados.includes(elem2) && nvMarcados.includes(elem3)
+    }else{
+      return marcados.includes(elem1) || marcados.includes(elem2) || marcados.includes(elem3)
+    }
+    
   }else if(show === 2){
     let totalMarcados = marcados.filter(val => val !== "").length
     let nvMarcados = marcados.filter(val => val !== "")
     if(totalMarcados === 1 && elem1 === nvMarcados[0]){
       return true
     }else if(totalMarcados > 1 && 
-      ( (elem1 === marcados[0] && elem2 === nvMarcados[1]) || 
-        (elem2 === marcados[0] && elem1 === nvMarcados[1])
+      ( (elem1 === nvMarcados[0] && elem2 === nvMarcados[1]) || 
+        (elem2 === nvMarcados[0] && elem1 === nvMarcados[1])
       )){
         return true
     }
@@ -156,9 +203,30 @@ const showAtivo = (posicoes, show = 'all',marcados = []) => {
       )){
         return true
     }
+
+    if(totalMarcados === 5 && elem1 === nvMarcados[4]){
+      return true
+    }else if(totalMarcados > 5 && 
+      ( (elem1 === nvMarcados[4] && elem2 === nvMarcados[5]) || 
+        (elem2 === nvMarcados[4] && elem1 === nvMarcados[5])
+      )){
+        return true
+    }
   }
 
   return false
+
+};
+
+const showAtivoColor = (elem, marcados = []) => {
+  if (elem === undefined) return false;
+  if (typeof elem !== "object") return false;
+ 
+  if(marcados.length === 0) return false
+  
+  //let totalMarcados = marcados.filter(val => val !== "").length
+  let nvMarcados = marcados.filter(val => val !== "")
+  return nvMarcados.includes(elem[0])
 
 };
 
@@ -206,25 +274,29 @@ const classPilotoCor = (posicao) => {
     return "roxo";
   }
 }
-const formatMosaicoCores = (posicoes, show = "all", fn) => {
+const formatMosaicoCores = (posicoes, show = "all", fn, showNumber = true) => {
   if (posicoes === undefined) return "";
   if (typeof posicoes !== "object") return posicoes;
   let formatString = "";
     posicoes.map((elem, index) => {
+        let posElem = elem
+        if(!showNumber){
+          posElem = ""
+        }
         if (show !== "all") {
             if (show > index) {
               if(fn !== undefined){
-                formatString += "<span class='" +fn(elem)+ "'>" +elem+ "</span>";
+                formatString += "<span class='" +fn(elem)+ "'>" +posElem+ "</span>";
               }else{
-                formatString += "<span class='" +classPilotoCor(elem)+ "'>" +elem+ "</span>";
+                formatString += "<span class='" +classPilotoCor(elem)+ "'>" +posElem+ "</span>";
               }
               formatString += " ";
             }
         } else {
           if(fn !== undefined){
-            formatString += "<span class='" +fn(elem)+ "'>" +elem+ "</span>";
+            formatString += "<span class='" +fn(elem)+ "'>" +posElem+ "</span>";
           }else{
-            formatString += "<span class='" +classPilotoCor(elem)+ "'>" +elem+ "</span>";
+            formatString += "<span class='" +classPilotoCor(elem)+ "'>" +posElem+ "</span>";
           }
           formatString += " ";
       }
@@ -346,5 +418,6 @@ export {
   formatMosaicoNovo,
   formatMosaicoOddNovo,
   formatImage,
-  showAtivo
+  showAtivo,
+  showAtivoColor
 };

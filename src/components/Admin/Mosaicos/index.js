@@ -16,6 +16,8 @@ export default function Mosaicos({ title:tituloHeader, show }) {
   const [pos2, setPos2] = useState('');
   const [pos3, setPos3] = useState('');
   const [pos4, setPos4] = useState('');
+  const [pos5, setPos5] = useState('');
+  const [pos6, setPos6] = useState('');
   
   const [showPercent, setShowPercent] = useState(false);
   const [percentVitoria, setPercentVitoria] = useState({});
@@ -69,46 +71,102 @@ export default function Mosaicos({ title:tituloHeader, show }) {
     return (_) => clearTimeout(ajaxTime);
   }, []);
 
-  const selecionarCorredor = (pos) => {
+  const selecionarCorredor = async (pos) => {
     let p1 = pos
     let alterou = false
 
     let marc = marcados
     //let marc = []
 
-    if(pos == pos2){
+    if(marc === undefined) marc = []
+    
+    if(marc.includes(pos)){
+      marc = marc.filter(val => val !== pos)
+      //NAO ATUALIZA
+      const novoMarc = Array.from(marc);
+      setMarcados(novoMarc)
+      contarAcerto('')
+      
+    }else{
+      if(marc.length >= 6 ) return 
+      if(marc.length === 0){
+        marc[0] = pos
+        setMarcados(marc)
+      }else{
+        const novoMarc = Array.from(marc);
+        novoMarc.push(pos)
+        setMarcados(novoMarc)
+      }
+      contarAcerto(pos)
+    }
+
+    /*
+    if(pos === pos2){
       setPos2('')
       marc[1] = ''
+      marc = marc.filter(val => val !== "")
       setMarcados(marc)
       contarAcerto(pos)
       return 
     }
 
-    if(pos == pos3){
+    if(pos === pos3){
       setPos3('')
       marc[2] = ''
+      marc = marc.filter(val => val !== "")
       setMarcados(marc)
       contarAcerto(pos)
       return 
     }
 
-    if(pos == pos4){
+    if(pos === pos4){
       setPos4('')
       marc[3] = ''
+      marc = marc.filter(val => val !== "")
       setMarcados(marc)
       contarAcerto(pos)
       return 
+    }
+
+    if(pos === pos5){
+      setPos5('')
+      marc[4] = ''
+      marc = marc.filter(val => val !== "")
+      setMarcados(marc)
+      contarAcerto(pos)
+      return 
+    }
+
+    if(pos === pos6){
+      setPos6('')
+      marc[5] = ''
+      marc = marc.filter(val => val !== "")
+      setMarcados(marc)
+      contarAcerto(pos)
+      return 
+    }
+
+    if(showNumberOdd !== 'all'){
+      if(pos === pos4){
+        setPos4('')
+        marc[3] = ''
+        marc = marc.filter(val => val !== "")
+        setMarcados(marc)
+        contarAcerto(pos)
+        return 
+      }
     }
     
     if(pos1 == '' && p1 != pos1){
-      setPos1(p1)
+      //setPos1(p1)
       marc[0] = p1
       alterou = true
       setMarcados(marc)
       contarAcerto(p1)
     }else if(pos1 != '' && p1 == pos1){
-      setPos1('')
+      //setPos1('')
       marc[0] = ''
+      marc = marc.filter(val => val !== "")
       alterou = true
       setMarcados(marc)
       contarAcerto('')
@@ -116,14 +174,15 @@ export default function Mosaicos({ title:tituloHeader, show }) {
 
     if(!alterou){
       if(pos2 == '' && p1 != pos2){
-        setPos2(p1)
+        //setPos2(p1)
         marc[1] = p1
         alterou = true
         setMarcados(marc)
         contarAcerto(p1)
       }else if(pos2 != '' && p1 == pos2){
-        setPos2('')
+        //setPos2('')
         marc[1] = ''
+        marc = marc.filter(val => val !== "")
         alterou = true
         setMarcados(marc)
         contarAcerto('')
@@ -132,43 +191,82 @@ export default function Mosaicos({ title:tituloHeader, show }) {
 
     if(!alterou){
       if(pos3 == '' && p1 != pos3){
-        setPos3(p1)
+        //setPos3(p1)
         marc[2] = p1
         alterou = true
         setMarcados(marc)
         contarAcerto(p1)
       }else if(pos3 != '' && p1 == pos3){
-        setPos3('')
+        //setPos3('')
         marc[2] = ''
+        marc = marc.filter(val => val !== "")
         alterou = true
         setMarcados(marc)
         contarAcerto('')
       }
     }
 
-    if(!alterou){
-      if(pos4 == '' && p1 != pos4){
+    if(!alterou && showNumberOdd !== 'all'){
+      if(pos4 === '' && p1 !== pos4){
         setPos4(p1)
         marc[3] = p1
         alterou = true
         setMarcados(marc)
         contarAcerto(p1)
-      }else if(pos4 != '' && p1 == pos4){
+      }else if(pos4 !=='' && p1 === pos4){
         setPos4('')
         marc[3] = ''
+        marc = marc.filter(val => val !== "")
+        alterou = true
+        setMarcados(marc)
+        contarAcerto('')
+      }
+    }
+
+    if(!alterou && showNumberOdd !== 'all'){
+      if(pos5 === '' && p1 !== pos5){
+        setPos5(p1)
+        marc[4] = p1
+        alterou = true
+        setMarcados(marc)
+        contarAcerto(p1)
+      }else if(pos5 !=='' && p1 === pos5){
+        setPos5('')
+        marc[4] = ''
+        marc = marc.filter(val => val !== "")
+        alterou = true
+        setMarcados(marc)
+        contarAcerto('')
+      }
+    }
+
+    if(!alterou && showNumberOdd !== 'all'){
+      if(pos6 === '' && p1 !== pos6){
+        setPos6(p1)
+        marc[5] = p1
+        alterou = true
+        setMarcados(marc)
+        contarAcerto(p1)
+      }else if(pos6 !=='' && p1 === pos6){
+        setPos6('')
+        marc[5] = ''
+        marc = marc.filter(val => val !== "")
         alterou = true
         setMarcados(marc)
         contarAcerto('')
       }
     }
     //setMarcados(marc)
+    */
     
   }
+  useEffect(() => {
+    contarAcerto('')
+  }, [marcados])
 
   const contarAcerto = (pos) => {
     
     //if(pos == ''){
-
     if(marcados === undefined || marcados === '' || marcados.length === 0){
       setPercentVitoria({})
       setPercentVitoriaMin({})
@@ -195,15 +293,17 @@ export default function Mosaicos({ title:tituloHeader, show }) {
     ]
 
     setShowPercent(true)
-    let vitorias = percentVitoria
-    let vitoriasMin = percentVitoriaMin
+    //let vitorias = percentVitoria
+    //let vitoriasMin = percentVitoriaMin
+    let vitorias = {}
+    let vitoriasMin = {}
     
     header.map(cab => {
       let total = 0;
       let acertos = 0;
       minutos.forEach(minuto => {
-        if(showNumberOdd == 1 ){
-          if(dadosCorridas[`${cab}:${minuto}`] != undefined && 
+        if(showNumberOdd === 1 ){
+          if(dadosCorridas[`${cab}:${minuto}`] !== undefined && 
           marcados.includes(dadosCorridas[`${cab}:${minuto}`][0]) ){
           //pos == dadosCorridas[`${cab}:${minuto}`][0]){  
             acertos++;
@@ -212,17 +312,20 @@ export default function Mosaicos({ title:tituloHeader, show }) {
           if(dadosCorridas[`${cab}:${minuto}`] !== undefined && showAtivo(dadosCorridas[`${cab}:${minuto}`], 2, marcados)){
             acertos++;
           }
-          if(dadosCorridas[`${cab}:${minuto}`] != undefined && (
+          if(dadosCorridas[`${cab}:${minuto}`] !== undefined && (
             marcados.includes(dadosCorridas[`${cab}:${minuto}`][0]) || marcados.includes(dadosCorridas[`${cab}:${minuto}`][1]) )){
             //acertos++;        
           }
-        }else if(showNumberOdd == 'all' ){
-          if(dadosCorridas[`${cab}:${minuto}`] != undefined && (
+        }else if(showNumberOdd === 'all' ){
+          if(dadosCorridas[`${cab}:${minuto}`] !== undefined && showAtivo(dadosCorridas[`${cab}:${minuto}`], 'all', marcados)){
+            acertos++;
+          }
+          /*if(dadosCorridas[`${cab}:${minuto}`] !== undefined && (
             marcados.includes(dadosCorridas[`${cab}:${minuto}`][0]) || marcados.includes(dadosCorridas[`${cab}:${minuto}`][1]) || marcados.includes(dadosCorridas[`${cab}:${minuto}`][2]) )){
             //pos === dadosCorridas[`${cab}:${minuto}`][0] 
           //|| pos === dadosCorridas[`${cab}:${minuto}`][1] || pos === dadosCorridas[`${cab}:${minuto}`][2])){  
             acertos++;        
-          }
+          }*/
         }
         total++;
       })
@@ -245,29 +348,33 @@ export default function Mosaicos({ title:tituloHeader, show }) {
       let totalMin = 0;
       let acertosMin = 0;
       header.forEach(hora => {
-        if(showNumberOdd == 1 ){
-          if(dadosCorridas[`${hora}:${cab}`] != undefined && 
+        if(showNumberOdd === 1 ){
+          if(dadosCorridas[`${hora}:${cab}`] !== undefined && 
             marcados.includes(dadosCorridas[`${hora}:${cab}`][0]) ){
             //pos == dadosCorridas[`${hora}:${cab}`][0]){  
             acertosMin++;        
           }
-        }else if(showNumberOdd == 2 ){
+        }else if(showNumberOdd === 2 ){
           if(dadosCorridas[`${hora}:${cab}`] !== undefined && showAtivo(dadosCorridas[`${hora}:${cab}`], 2, marcados)){
             acertosMin++;
           }
-          if(dadosCorridas[`${hora}:${cab}`] != undefined && (
+          if(dadosCorridas[`${hora}:${cab}`] !== undefined && (
             marcados.includes(dadosCorridas[`${hora}:${cab}`][0]) || marcados.includes(dadosCorridas[`${hora}:${cab}`][1]) )) {
             //pos === dadosCorridas[`${hora}:${cab}`][0] 
             //|| pos === dadosCorridas[`${hora}:${cab}`][1])){  
             //acertosMin++;        
           }
-        }else if(showNumberOdd == 'all' ){
-          if(dadosCorridas[`${hora}:${cab}`] != undefined && (
+        }else if(showNumberOdd === 'all' ){
+          if(dadosCorridas[`${hora}:${cab}`] !== undefined && showAtivo(dadosCorridas[`${hora}:${cab}`], 'all', marcados)){
+            acertosMin++;
+          }
+          /*
+          if(dadosCorridas[`${hora}:${cab}`] !== undefined && (
             marcados.includes(dadosCorridas[`${hora}:${cab}`][0]) || marcados.includes(dadosCorridas[`${hora}:${cab}`][1]) || marcados.includes(dadosCorridas[`${hora}:${cab}`][2]) )){
             //pos === dadosCorridas[`${hora}:${cab}`][0] 
           //|| pos === dadosCorridas[`${hora}:${cab}`][1] || pos === dadosCorridas[`${hora}:${cab}`][2])){  
             acertosMin++;        
-          }
+          }*/
         }
         totalMin++;
       })
@@ -310,13 +417,21 @@ export default function Mosaicos({ title:tituloHeader, show }) {
                 <div className="card custom-card">
                   <div className="card-body">
                     <p style={{ fontSize: '14px', textAlign: 'center', textTransform: 'uppercase', fontWeight: 'bold', lineHeight: '30px'}}>
-                      Pilotos Selecionados
+                      Pilotos Selecionados 
                       <br />
-                      {marcados.map((item) => (
+                      {marcados.map((item, index) => (
                         <>
                         {item !== '' && (
                           <>
-                            {parse(formatImage(item))}
+                            {show === 2 && 
+                              parse(formatImage(item, index%2 === 1 ? 'padding-right: 5px' : '' ))
+                            }
+                            {show === 'all' && 
+                              parse(formatImage(item, (index+1)%3 === 0 ? 'padding-right: 5px' : '' ))
+                            }
+                            {show === 1 && 
+                              parse(formatImage(item))
+                            }
                           </>
                         )}
                         </>
