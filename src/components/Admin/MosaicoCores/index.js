@@ -60,12 +60,26 @@ export default function MosaicoCores({ title:tituloHeader }) {
   }, []);
 
   const selecionarCorredor = (pos) => {
+    pos = parseInt(pos)
+    let bloco1 = [1,2,3,4]
+    let bloco2 = [5,6,7,8]
+    let bloco3 = [9,10,11,12]
 
     let marc = marcados
     let nvMarcados = marc.filter(val => val !== "")
-    //let marc = []
-    if(nvMarcados.includes(pos)){
-      nvMarcados.splice(nvMarcados.indexOf(pos), 1);
+    let jaExisteMarcado = []
+    if(bloco1.includes(pos)){
+      jaExisteMarcado = marc.filter(val => bloco1.includes(val))
+    }else if(bloco2.includes(pos)){
+      jaExisteMarcado = marc.filter(val => bloco2.includes(val))
+    }else if(bloco3.includes(pos)){
+      jaExisteMarcado = marc.filter(val => bloco3.includes(val))
+    }
+
+    if(jaExisteMarcado.length > 0){
+      nvMarcados = nvMarcados.filter(val => !jaExisteMarcado.includes(val))
+      //nvMarcados = nvMarcados.splice(nvMarcados.indexOf(pos), 1);
+      //console.log('nvMarcados', nvMarcados.indexOf(pos))
       setMarcados(nvMarcados)
 
       nvMarcados = nvMarcados.filter(val => val !== "")
@@ -78,7 +92,6 @@ export default function MosaicoCores({ title:tituloHeader }) {
       atualizaHeader(percentVitoriaMin, nvMarcados)
       return ;
     }
-
 
     if(nvMarcados.length >= 3 ){
       return ;
@@ -201,7 +214,7 @@ export default function MosaicoCores({ title:tituloHeader }) {
                 <div className="card custom-card">
                   <div className="card-body">
                     <p style={{ fontSize: '14px', textAlign: 'center', textTransform: 'uppercase', fontWeight: 'bold', lineHeight: '30px'}}>
-                      Pilotos Selecionados
+                      Cores Selecionadas
                       <br />
                       {marcados.map((item) => (
                         <>

@@ -15,6 +15,7 @@ import Maximas from "./Maximas";
 import Pilotos from "./Maximas/pilotos";
 import EditarPerfil from "./User/index";
 import Tutorial from "./Tutorial";
+import GraficoPiloto from "./GraficoPiloto";
 import { useNavigate, useLocation } from "react-router-dom";
 import MyContext from "./../../context";
 
@@ -50,6 +51,7 @@ function Admin() {
         <Route exact path="/admin/pilotos" element={<Pilotos title={"Máxima por Pilotos - Sistema Autobet"} />} />
         <Route exact path="/admin/editar-perfil" element={<EditarPerfil title={"Editar Perfil - Sistema Autobet"} />} />
         <Route exact path="/admin/tutoriais" element={<Tutorial title={"Como jogar na bet365 - Sistema Autobet"} />} />
+        <Route exact path="/admin/grafico-piloto" element={<GraficoPiloto title={"Gráfico de Prilotos - Sistema Autobet"} />} />
       </Routes>
     </Layout>
   );

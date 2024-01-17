@@ -223,11 +223,22 @@ const showAtivoColor = (elem, marcados = []) => {
   if (typeof elem !== "object") return false;
  
   if(marcados.length === 0) return false
-  
+  let piloto = elem[0]
   //let totalMarcados = marcados.filter(val => val !== "").length
   let nvMarcados = marcados.filter(val => val !== "")
-  return nvMarcados.includes(elem[0])
+  //return nvMarcados.includes(elem[0])
+  for(let index in nvMarcados){
+    let valMarc = nvMarcados[index]
+    if(valMarc <= 4 && piloto <= 4){
+      return true
+    }else if(valMarc > 4 && valMarc <= 8 && piloto > 4 && piloto <= 8){
+      return true
+    }else if(valMarc > 8 && piloto > 8){
+      return true
+    }
+  }
 
+  return false
 };
 
 const formatImage = (elem, style) => {

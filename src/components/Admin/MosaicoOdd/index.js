@@ -71,6 +71,28 @@ export default function MosaicoOdd({ title }) {
     let alterou = false
     let marc = marcados
 
+    if(marc === undefined) marc = []
+    
+    if(marc.includes(pos)){
+      marc = marc.filter(val => val !== pos)
+      const novoMarc = Array.from(marc);
+      setMarcados(novoMarc)
+      
+    }else{
+      if(marc.length >= 3 ) return 
+      if(marc.length === 0){
+        marc[0] = pos
+        const novoMarc = Array.from([]);
+        novoMarc.push(pos)
+        setMarcados(novoMarc)
+      }else{
+        const novoMarc = Array.from(marc);
+        novoMarc.push(pos)
+        setMarcados(novoMarc)
+      }
+    }
+
+    /*
     if(pos1 == '' && p1 != pos1){
       setPos1(p1)
       marc[0] = p1
@@ -105,7 +127,7 @@ export default function MosaicoOdd({ title }) {
       }
     }
 
-    setMarcados(marc)
+    setMarcados(marc)*/
   }
 
   return (

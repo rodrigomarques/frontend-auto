@@ -41,7 +41,7 @@ export default function Layout({ children }) {
         } else {
           setManutencao(false);
         }
-        if(res.data.token !== undefined && res.data.token != ""){
+        if(res.data.token !== undefined && res.data.token !== ""){
           localStorage.setItem("tk", res.data.token);
         }
         
@@ -351,7 +351,7 @@ export default function Layout({ children }) {
                           >
                             <i className="side-menu__icon fa fa-delicious"></i>
                             <span className="side-menu__label">
-                              Mosaico Back
+                              Back
                             </span>
                           </Link>
                         </li>
@@ -362,7 +362,7 @@ export default function Layout({ children }) {
                           >
                             <i className="side-menu__icon fa fa-delicious"></i>
                             <span className="side-menu__label">
-                              Mosaico Previsão
+                              Previsão
                             </span>
                           </Link>
                         </li>
@@ -373,7 +373,7 @@ export default function Layout({ children }) {
                           >
                             <i className="side-menu__icon fa fa-delicious"></i>
                             <span className="side-menu__label">
-                              Mosaico Tricast
+                              Tricast
                             </span>
                           </Link>
                         </li>
@@ -384,7 +384,7 @@ export default function Layout({ children }) {
                           >
                             <i className="side-menu__icon fa fa-delicious"></i>
                             <span className="side-menu__label">
-                              Mosaico Odd
+                              Odd
                             </span>
                           </Link>
                         </li>
@@ -395,7 +395,7 @@ export default function Layout({ children }) {
                           >
                             <i className="side-menu__icon fa fa-delicious"></i>
                             <span className="side-menu__label">
-                              Mosaico Cores
+                              Cores
                             </span>
                           </Link>
                         </li>
@@ -406,7 +406,18 @@ export default function Layout({ children }) {
                           >
                             <i className="side-menu__icon fa fa-delicious"></i>
                             <span className="side-menu__label">
-                              Mosaico Valores
+                              Valores
+                            </span>
+                          </Link>
+                        </li>
+                        <li className="slide">
+                          <Link
+                            className="side-menu__item"
+                            to="/admin/grafico-piloto"
+                          >
+                            <i className="side-menu__icon fa fa-area-chart"></i>
+                            <span className="side-menu__label">
+                              Gráficos
                             </span>
                           </Link>
                         </li>

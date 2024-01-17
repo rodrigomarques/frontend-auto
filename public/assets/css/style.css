@@ -23477,7 +23477,7 @@ video {
     }
 
     .horizontal .slide {
-        margin: 0 3px;
+        margin:  0px 10px;
     }
 
     .horizontal .side-menu .slide .side-menu__item.active {
